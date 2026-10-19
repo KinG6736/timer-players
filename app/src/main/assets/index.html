@@ -1,24 +1,773 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#071321"><title>Таймеры игроков</title>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#071321"><title>Таймеры игроков</title>
 <style>
 :root{color-scheme:dark;--bg:#071321;--panel:#0b1a2b;--line:#183652;--muted:#8fb3df;--green:#00d98b;--blue:#1688ff}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#06111f,#08182a);color:#eff6ff;font-family:system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:14px;padding-bottom:82px}.top{padding:18px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.logo{font-size:28px;background:#102e50;border-radius:50%;padding:8px}.head{flex:1;min-width:0}.head h1{font-size:20px;margin:0;font-weight:800}.sub{color:var(--muted);font-size:13px;margin-top:3px}.gear,.iconbtn{background:#10243b;border:1px solid #21466c;color:#c4ddff;border-radius:12px;padding:10px;font-size:19px}.searchrow{display:flex;gap:8px;padding:10px 12px}.searchrow input{flex:1;min-width:0}.controls{display:flex;gap:8px;padding:0 12px 10px}.controls select{width:50%;min-width:0}input,select,textarea{background:#0d2035;color:#eaf4ff;border:1px solid #214466;border-radius:11px;padding:10px;font:inherit;outline:none}button{font:inherit;cursor:pointer}.list{padding:0 10px;display:grid;gap:8px}.player{background:linear-gradient(110deg,#0d1d30,#0a1929);border:1px solid #153653;border-radius:17px;padding:10px;display:grid;grid-template-columns:34px 48px minmax(0,1fr) 42px;gap:8px;align-items:center}.num{font-weight:800;color:#9bc4ff;font-size:15px;align-self:start;padding-top:4px}.avatar{width:46px;height:46px;border-radius:50%;background:#173d60;display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid #31618b}.main{min-width:0}.nameRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.name{font-size:15px;font-weight:700;overflow-wrap:anywhere}.count{font-size:11px;color:#00efaa;border:1px solid #008e68;background:#003c34;border-radius:99px;padding:2px 6px;white-space:nowrap}.time{font-size:14px;font-weight:700;letter-spacing:.1px;margin:2px 0 5px;white-space:nowrap}.progressrow{display:flex;align-items:center;gap:7px}.track{height:8px;flex:1;min-width:15px;background:#19314e;border-radius:99px;overflow:hidden}.bar{height:100%;border-radius:99px;transition:width .3s}.pct{width:31px;text-align:right;font-weight:800;font-size:12px}.comment{font-size:11px;color:#8fc5f7;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.comment.empty{opacity:.7}.actions{display:flex;flex-direction:column;align-items:stretch;gap:5px}.buff{border:1px solid #00ef9a;background:linear-gradient(135deg,#00bd7a,#007d58);color:white;border-radius:11px;padding:9px 4px;font-size:11px;font-weight:800;white-space:nowrap}.buff small{display:block;color:#c9ffeb;font-size:9px;font-weight:500;margin-top:3px}.pencil{border:1px solid #234c73;background:#10243b;color:#c3ddff;border-radius:10px;height:35px;font-size:19px}.more{background:transparent;border:0;color:#a7c8f5;font-size:20px;height:25px}.fab{position:fixed;right:14px;bottom:70px;background:#087cff;color:white;border:0;border-radius:99px;padding:12px 18px;box-shadow:0 5px 20px #001a3d;font-weight:700}.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#081626;border-top:1px solid #173956;padding:8px 0 10px;color:#8caed5}.nav div{text-align:center;font-size:11px}.nav b{display:block;font-size:19px;margin-bottom:2px}.nav .active{color:#168bff}.empty{text-align:center;color:var(--muted);padding:28px}.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.dialog{width:100%;max-width:420px;background:#0b1a2b;border:1px solid #285178;border-radius:18px;padding:18px;display:grid;gap:10px;max-height:90vh;overflow:auto}.dialog h2{margin:0 0 4px}.dialog label{color:#a9c7e9;font-size:12px}.dialog input,.dialog textarea,.dialog select{width:100%}.formrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.save{background:#087cff;border:0;color:white;border-radius:11px;padding:12px;font-weight:700}.cancel{background:#132a43;border:1px solid #25486a;color:#cce1fa;border-radius:11px;padding:11px}.muted{color:#88aaca;font-size:12px}
 @media(min-width:600px){.list{max-width:850px;margin:auto}.top,.searchrow,.controls{max-width:850px;margin-left:auto;margin-right:auto}.player{grid-template-columns:40px 52px minmax(0,1fr) 48px}.avatar{width:50px;height:50px}.name{font-size:16px}.time{font-size:15px}.buff{font-size:12px;padding:10px 6px}}
+.avatar{overflow:hidden;flex-shrink:0}.avatar-img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+/* Адаптация под разные размеры экрана */
+.avatar{overflow:hidden;flex-shrink:0}
+.avatar-img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+@media(max-width:420px){
+  .player{gap:7px;padding:9px 7px}
+  .avatar{width:38px;height:38px}
+  .actions{gap:4px}
+  .count{font-size:10px}
+  .time{font-size:clamp(16px,4.5vw,22px)}
+}
+@media(orientation:landscape) and (min-width:600px){
+  #list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+  .player{min-width:0;gap:8px;padding:10px}
+  .main{min-width:0}
+  .actions{gap:4px}
+  .modal{max-height:90vh;overflow-y:auto}
+}
+
+
+/* Компактная карточка игрока и широкая кнопка баффа */
+@media (max-width: 420px) {
+  .player {
+    grid-template-columns: 20px 32px minmax(0, 1fr) 105px;
+    gap: 4px;
+    padding: 6px;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+  }
+  .num { font-size: 11px; padding-top: 2px; }
+  .actions { gap: 4px; }
+  .buff {
+    width: 105px;
+    padding: 7px 3px;
+    font-size: 11px;
+  }
+  .buff small { font-size: 8px; margin-top: 2px; }
+  .pencil { height: 28px; font-size: 16px; }
+  .more { height: 20px; font-size: 17px; }
+  .name { font-size: 13px; }
+  .count { font-size: 9px; padding: 1px 4px; }
+  .time { font-size: 12px; margin: 2px 0 4px; }
+  .track { height: 6px; }
+  .pct { width: 25px; font-size: 10px; }
+  .comment { font-size: 10px; }
+}
+
+
+/* Прямоугольные кнопки баффа и карандаша */
+@media (max-width: 420px) {
+  .player {
+    grid-template-columns: 20px 30px minmax(0, 1fr) 120px !important;
+    gap: 4px;
+  }
+  .actions {
+    width: 120px;
+    gap: 5px;
+    align-items: stretch;
+  }
+  .actions .buff,
+  .actions .pencil {
+    width: 120px !important;
+    box-sizing: border-box;
+    border-radius: 5px !important;
+  }
+  .actions .buff {
+    min-height: 42px;
+    padding: 7px 4px;
+  }
+  .actions .pencil {
+    height: 36px;
+    min-height: 36px;
+    font-size: 20px;
+  }
+}
+
+
+/* ФИНАЛЬНОЕ ИСПРАВЛЕНИЕ КНОПОК */
+@media (max-width: 600px) {
+  .player {
+    grid-template-columns: 20px 30px minmax(0, 1fr) 88px !important;
+    gap: 4px !important;
+    padding: 8px 6px !important;
+  }
+  .actions {
+    width: 88px !important;
+    min-width: 0 !important;
+    gap: 5px !important;
+  }
+  .actions .buff,
+  .actions .pencil {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+  }
+  .actions .buff {
+    min-height: 42px !important;
+    padding: 7px 2px !important;
+    font-size: 11px !important;
+  }
+  .actions .buff small {
+    font-size: 9px !important;
+  }
+  .actions .pencil {
+    height: 36px !important;
+    min-height: 36px !important;
+    font-size: 20px !important;
+  }
+}
+
+
+/* УМЕНЬШЕНИЕ ПОЛОСКИ ПРОЦЕНТОВ */
+@media (max-width: 600px) {
+  .progressrow {
+    gap: 4px !important;
+    min-width: 0 !important;
+  }
+  .track {
+    flex: 1 1 0 !important;
+    min-width: 8px !important;
+  }
+  .pct {
+    flex: 0 0 25px !important;
+    width: 25px !important;
+    font-size: 10px !important;
+  }
+}
+
+
+/* УМЕНЬШЕНИЕ СРЕДНЕГО БЛОКА */
+@media (max-width: 600px) {
+  .player {
+    grid-template-columns: 22px 36px minmax(0, 1fr) 88px !important;
+    column-gap: 4px !important;
+  }
+  .main {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  .nameRow, .progressrow {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .comment {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+
+/* ИСПРАВЛЕННАЯ СЕТКА КАРТОЧКИ */
+@media (max-width: 600px) {
+  .player {
+    display: grid !important;
+    grid-template-columns: 20px 30px minmax(0, 1fr) 88px !important;
+    column-gap: 4px !important;
+    padding: 7px 5px !important;
+    min-width: 0 !important;
+  }
+  .avatar {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 0 !important;
+    font-size: 17px !important;
+  }
+  .main {
+    grid-column: 3 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  .actions {
+    grid-column: 4 !important;
+    width: 88px !important;
+    min-width: 0 !important;
+  }
+  .actions .buff,
+  .actions .pencil {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .nameRow, .progressrow {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .count {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .time {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    font-size: 12px !important;
+  }
+  .track {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  .pct {
+    flex: 0 0 25px !important;
+    width: 25px !important;
+    font-size: 10px !important;
+  }
+  .comment {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+
+/* КВАДРАТНАЯ АВАТАРКА */
+@media (max-width: 600px) {
+  .player {
+    grid-template-columns: 20px 67px minmax(0, 1fr) 88px !important;
+  }
+  .avatar {
+    width: 65px !important;
+    height: 65px !important;
+    min-width: 65px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    font-size: 23px !important;
+  }
+  .avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+  }
+}
+
+
+/* КОМПАКТНЫЕ КНОПКИ ПО ВЫСОТЕ АВАТАРКИ */
+@media (max-width: 600px) {
+  .actions {
+    height: 65px !important;
+    width: 88px !important;
+    gap: 3px !important;
+    justify-content: stretch !important;
+  }
+  .actions .buff {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 3px 2px !important;
+    line-height: 13px !important;
+    font-size: 10px !important;
+  }
+  .actions .buff small {
+    margin-top: 1px !important;
+    font-size: 8px !important;
+    line-height: 9px !important;
+  }
+  .actions .pencil {
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 0 !important;
+    line-height: 24px !important;
+    font-size: 17px !important;
+  }
+}
+
+
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  width: 100%;
+}
+.category-tab {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 5px;
+  border: 1px solid #214466;
+  border-radius: 10px;
+  background: #0d2035;
+  color: #a9c7e9;
+  font-size: 12px;
+  font-weight: 700;
+}
+.category-tab.active {
+  background: #103b5c;
+  border-color: #1688ff;
+  color: #ffffff;
+}
+@media (min-width: 600px) {
+  .category-tabs {
+    max-width: 850px;
+    margin: auto;
+  }
+}
+
+
+/* ГОРИЗОНТАЛЬНЫЙ РЕЖИМ КАК В ВЕРТИКАЛЬНОМ */
+@media (orientation: landscape) and (max-height: 600px) {
+  .category-tabs {
+    width: calc(100% - 128px) !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+  }
+  .list {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: calc(100% - 128px) !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  
+    box-sizing: border-box !important;}
+  .player {
+    display: grid !important;
+    grid-template-columns: 20px 67px minmax(0, 1fr) 88px !important;
+    column-gap: 4px !important;
+    padding: 7px 5px !important;
+    min-width: 0 !important;
+  }
+  .avatar {
+    width: 65px !important;
+    height: 65px !important;
+    min-width: 65px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+  .avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+  }
+  .main {
+    grid-column: 3 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  .nameRow, .progressrow {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .count {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .time {
+    font-size: 12px !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .track {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  .pct {
+    flex: 0 0 25px !important;
+    width: 25px !important;
+    font-size: 10px !important;
+  }
+  .comment {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .actions {
+    grid-column: 4 !important;
+    width: 88px !important;
+    height: 65px !important;
+    min-width: 0 !important;
+    gap: 3px !important;
+  }
+  .actions .buff {
+    width: 100% !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 3px 2px !important;
+    line-height: 13px !important;
+    font-size: 10px !important;
+  }
+  .actions .buff small {
+    margin-top: 1px !important;
+    font-size: 8px !important;
+    line-height: 9px !important;
+  }
+  .actions .pencil {
+    width: 100% !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 0 !important;
+    line-height: 24px !important;
+    font-size: 17px !important;
+  }
+}
+
 </style></head><body>
 <header class="top"><div class="logo">👥</div><div class="head"><h1>Таймеры игроков</h1><div class="sub" id="total">Всего: 0 / 99</div></div><button class="gear" onclick="settings()" aria-label="Настройки">⚙</button></header>
+<div id="SUPABASE_TIMERPLAYERS_AUTH" style="padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+  <button id="googleLogin" type="button" onclick="loginGoogle()" style="padding:10px 14px;border-radius:10px;border:0;background:#2388ff;color:white;font-weight:bold">Войти через Google</button>
+  <span id="authStatus" style="font-size:12px;opacity:.8">Вход не выполнен</span>
+  <button id="googleLogout" type="button" onclick="logoutGoogle()" style="display:none;padding:8px;border-radius:8px">Выйти</button>
+</div>
 <div class="searchrow"><input id="search" placeholder="⌕  Поиск игрока..." oninput="render()"><button class="iconbtn" onclick="sortPlayers()" title="Сортировать">↕</button></div>
 <div class="controls"><select id="limit" onchange="setLimit(this.value)" aria-label="Максимум игроков"><option value="10">Макс. игроков: 10</option><option value="25">Макс. игроков: 25</option><option value="50">Макс. игроков: 50</option><option value="75">Макс. игроков: 75</option><option value="99" selected>Макс. игроков: 99</option></select><select id="sorting" onchange="render()"><option value="default">Порядок: по номеру</option><option value="time">Сначала меньше времени</option><option value="buff">Больше баффов</option><option value="name">По имени</option></select></div>
+<div class="category-tabs">
+<button type="button" id="tab-construction" class="category-tab active" onclick="switchTab('construction')">🏗 Строительство</button>
+<button type="button" id="tab-research" class="category-tab" onclick="switchTab('research')">🔬 Исследования</button>
+</div>
 <main class="list" id="list"></main><button class="fab" onclick="addPlayer()">＋ Добавить</button><nav class="nav"><div class="active"><b>♟</b>Игроки</div><div onclick="showComments()"><b>▤</b>Комментарии</div><div onclick="settings()"><b>⚙</b>Настройки</div></nav>
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const KEY='timerPlayers.v1', SETTINGS='timerPlayers.settings';let players=[],cfg={limit:99},editId=null,sortFlip=false;
-function load(){try{players=JSON.parse(localStorage.getItem(KEY)||'[]');cfg={...cfg,...JSON.parse(localStorage.getItem(SETTINGS)||'{}')}}catch(e){players=[]}if(!players.length){for(let i=1;i<=10;i++)players.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+i),name:['Монах','Войтель','Саймон','Креон','Луна','Тень','Гром','Роза','Ворон','Снежная'][i-1],end:Date.now()+[142,76,58,21,12,89,173,34,99,5][i-1]*86400000,buffs:[7,3,5,2,4,1,6,2,0,3][i-1],comment:['Фарм до конца недели','Нужно усилить после 50 дней','Проверить на следующей неделе','Может быть полезен для клана','Срочно проверить!','Без комментария','Хороший игрок, не трогать','Проверить активность','Пока всё стабильно','Крайне важно!'][i-1],initial:([142,76,58,21,12,89,173,34,99,5][i-1]*86400000)});save()}document.getElementById('limit').value=String(cfg.limit);render()}
-function save(){localStorage.setItem(KEY,JSON.stringify(players));localStorage.setItem(SETTINGS,JSON.stringify(cfg))}function left(p){return Math.max(0,p.end-Date.now())}function fmt(ms){let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return `${d} д. ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
-function render(){let q=(document.getElementById('search')?.value||'').toLowerCase(),mode=document.getElementById('sorting')?.value||'default';let arr=players.filter(p=>(p.name+' '+p.comment).toLowerCase().includes(q));if(mode==='time')arr.sort((a,b)=>left(a)-left(b));if(mode==='buff')arr.sort((a,b)=>b.buffs-a.buffs);if(mode==='name')arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));if(mode==='default')arr.sort((a,b)=>players.indexOf(a)-players.indexOf(b));document.getElementById('total').textContent=`Всего: ${players.length} / ${cfg.limit}`;document.getElementById('list').innerHTML=arr.length?arr.map((p)=>{let ms=left(p),pct=p.initial>0?Math.max(0,Math.min(100,ms/p.initial*100)):0,color=pct>50?'#00d98b':pct>20?'#f5bd20':'#ff354f',n=players.indexOf(p)+1;return `<article class="player"><div class="num">${String(n).padStart(3,'0')}</div><div class="avatar">${avatar(p.name)}</div><div class="main"><div class="nameRow"><span class="name">${esc(p.name)}</span><span class="count">${p.buffs} бафф${plural(p.buffs)}</span></div><div class="time">${fmt(ms)}</div><div class="progressrow"><div class="track"><div class="bar" style="width:${pct}%;background:${color}"></div></div><span class="pct" style="color:${color}">${Math.round(pct)}%</span></div><div class="comment ${p.comment?'':'empty'}">☏ ${esc(p.comment||'Без комментария')}</div></div><div class="actions"><button class="buff" onclick="buff('${p.id}')">⚡ −15%<small>Нажато ${p.buffs} ${pluralTimes(p.buffs)}</small></button><button class="pencil" onclick="editPlayer('${p.id}')" aria-label="Редактировать">✎</button><button class="more" onclick="playerMenu('${p.id}')" aria-label="Меню">⋮</button></div></article>`}).join(''):'<div class="empty">Игроки не найдены</div>'}
+const KEY='timerPlayers.v1', SETTINGS='timerPlayers.settings';let players=[],activeTab='construction',cfg={limit:99},editId=null,sortFlip=false;
+function load(){
+  try { cfg={...cfg,...JSON.parse(localStorage.getItem(SETTINGS)||'{}')}; }
+  catch(e) {}
+  players=[];
+  document.getElementById('limit').value=String(cfg.limit);
+  render();
+}
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(players));
+  localStorage.setItem(SETTINGS,JSON.stringify(cfg));
+  if(cloudReady) cloudSyncChanges();
+}function left(p){return Math.max(0,p.end-Date.now())}function fmt(ms){let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return `${d} д. ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function readAvatar(){return new Promise(resolve=>{let input=document.getElementById('pavatar'),file=input?.files?.[0];if(!file){resolve(null);return}let reader=new FileReader();reader.onload=()=>{let img=new Image();img.onload=()=>{let c=document.createElement('canvas');c.width=c.height=192;let x=c.getContext('2d'),side=Math.min(img.width,img.height);x.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,192,192);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=()=>resolve(null);img.src=reader.result};reader.onerror=()=>resolve(null);reader.readAsDataURL(file)})}
+function switchTab(tab){
+if(tab!=='construction'&&tab!=='research')return;
+activeTab=tab;
+document.getElementById('tab-construction').classList.toggle('active',tab==='construction');
+document.getElementById('tab-research').classList.toggle('active',tab==='research');
+render();
+}
+function render(){players.forEach(p=>{p.buffs=Math.max(0,Number(p.buffs)||0)});let q=(document.getElementById('search')?.value||'').toLowerCase(),mode=document.getElementById('sorting')?.value||'default';let arr=players.filter(p=>(p.category||'construction')===activeTab&&(p.name+' '+p.comment).toLowerCase().includes(q));if(mode==='time')arr.sort((a,b)=>left(a)-left(b));if(mode==='buff')arr.sort((a,b)=>b.buffs-a.buffs);if(mode==='name')arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));if(mode==='default')arr.sort((a,b)=>players.indexOf(a)-players.indexOf(b));document.getElementById('total').textContent=`Всего: ${players.filter(p=>(p.category||'construction')===activeTab).length} / ${cfg.limit}`;document.getElementById('list').innerHTML=arr.length?arr.map((p)=>{let ms=left(p),pct=p.initial>0?Math.max(0,Math.min(100,ms/p.initial*100)):0,color=pct>50?'#00d98b':pct>20?'#f5bd20':'#ff354f',n=arr.indexOf(p)+1;return `<article class="player"><div class="num">${String(n).padStart(3,'0')}</div><div class="avatar">${p.avatar?`<img class="avatar-img" src="${p.avatar}" alt="">`:avatar(p.name)}</div><div class="main"><div class="nameRow"><span class="name">${esc(p.name)}</span><span class="count">${p.buffs} бафф${plural(p.buffs)}</span></div><div class="time">${fmt(ms)}</div><div class="progressrow"><div class="track"><div class="bar" style="width:${pct}%;background:${color}"></div></div><span class="pct" style="color:${color}">${Math.round(pct)}%</span></div><div class="comment ${p.comment?'':'empty'}">☏ ${esc(p.comment||'Без комментария')}</div></div><div class="actions"><button class="buff" onclick="buff('${p.id}')">⚡ −15%<small>Нажато ${p.buffs} ${pluralTimes(p.buffs)}</small></button><button class="pencil" onclick="playerMenu('${p.id}')" aria-label="Меню игрока">✎</button></div></article>`}).join(''):'<div class="empty">Игроки не найдены</div>'}
 function plural(n){let x=n%10,y=n%100;return x===1&&y!==11?'':'ов'}function pluralTimes(n){return n===1?'раз':'раз'}function avatar(name){let icons={'Монах':'🥷','Войтель':'🧝🏻‍♀️','Саймон':'🧑🏻','Креон':'👹','Луна':'🧝🏻‍♀️','Тень':'🌑','Гром':'🧔🏻','Роза':'🌹','Ворон':'🦅','Снежная':'❄️'};return icons[name]||'👤'}function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function buff(id){let p=players.find(x=>x.id===id);if(!p)return;let ms=left(p);p.end=Date.now()+ms*.85;p.buffs++;save();render()}function openModal(html){document.getElementById('dialog').innerHTML=html;document.getElementById('modal').style.display='flex'}function closeModal(){document.getElementById('modal').style.display='none'}document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
-function editPlayer(id){let p=players.find(x=>x.id===id);if(!p)return;editId=id;let ms=left(p),days=Math.max(1,Math.min(200,Math.ceil(ms/86400000))),hrs=Math.floor(ms/3600000)%24,mins=Math.floor(ms/60000)%60;openModal(`<h2>✎ Игрок</h2><label>Имя</label><input id="pname" maxlength="60" value="${esc(p.name)}"><label>Оставшееся время (1–200 дней)</label><input id="pdays" type="number" min="1" max="200" value="${days}"><div class="formrow"><div><label>Часы</label><input id="phours" type="number" min="0" max="23" value="${hrs}"></div><div><label>Минуты</label><input id="pmins" type="number" min="0" max="59" value="${mins}"></div></div><label>Комментарий</label><textarea id="pcomment" rows="3" maxlength="500">${esc(p.comment||'')}</textarea><div class="muted">Нажатий баффа: ${p.buffs}</div><button class="save" onclick="saveEdit()">Сохранить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
-function saveEdit(){let p=players.find(x=>x.id===editId);if(!p)return;let name=document.getElementById('pname').value.trim()||'Без имени',days=Math.max(1,Math.min(200,parseInt(document.getElementById('pdays').value)||1)),h=Math.max(0,Math.min(23,parseInt(document.getElementById('phours').value)||0)),m=Math.max(0,Math.min(59,parseInt(document.getElementById('pmins').value)||0));p.name=name;p.end=Date.now()+((days*24+h)*60+m)*60000;p.initial=((days*24+h)*60+m)*60000;p.comment=document.getElementById('pcomment').value.trim();save();closeModal();render()}
-function addPlayer(){if(players.length>=cfg.limit){openModal(`<h2>Лимит достигнут</h2><p>Добавлено ${players.length} из ${cfg.limit} игроков. Измени максимальное количество в настройках.</p><button class="save" onclick="closeModal();settings()">Настройки</button><button class="cancel" onclick="closeModal()">Закрыть</button>`);return}editId=null;openModal(`<h2>＋ Новый игрок</h2><label>Имя</label><input id="pname" maxlength="60" placeholder="Имя игрока"><label>Таймер (1–200 дней)</label><input id="pdays" type="number" min="1" max="200" value="30"><div class="formrow"><div><label>Часы</label><input id="phours" type="number" min="0" max="23" value="0"></div><div><label>Минуты</label><input id="pmins" type="number" min="0" max="59" value="0"></div></div><label>Комментарий</label><textarea id="pcomment" rows="2" placeholder="Необязательно"></textarea><button class="save" onclick="createPlayer()">Добавить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
-function createPlayer(){let days=Math.max(1,Math.min(200,parseInt(document.getElementById('pdays').value)||30)),h=Math.max(0,Math.min(23,parseInt(document.getElementById('phours').value)||0)),m=Math.max(0,Math.min(59,parseInt(document.getElementById('pmins').value)||0)),ms=((days*24+h)*60+m)*60000;players.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name:document.getElementById('pname').value.trim()||`Игрок ${players.length+1}`,end:Date.now()+ms,initial:ms,buffs:0,comment:document.getElementById('pcomment').value.trim()});save();closeModal();render()}
-function setLimit(v){cfg.limit=Math.max(1,Math.min(99,parseInt(v)||99));save();render()}function settings(){openModal(`<h2>⚙ Настройки</h2><label>Максимальное количество игроков (1–99)</label><input id="setlimit" type="number" min="1" max="99" value="${cfg.limit}"><p class="muted">При уменьшении лимита существующие игроки и их данные не удаляются.</p><button class="save" onclick="cfg.limit=Math.max(1,Math.min(99,parseInt(document.getElementById('setlimit').value)||99));save();document.getElementById('limit').value=String([10,25,50,75,99].includes(cfg.limit)?cfg.limit:99);closeModal();render()">Сохранить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}function playerMenu(id){let p=players.find(x=>x.id===id);if(!p)return;openModal(`<h2>${esc(p.name)}</h2><p>Баффов использовано: <b>${p.buffs}</b></p><button class="save" onclick="closeModal();editPlayer('${id}')">✎ Редактировать игрока</button><button class="cancel" onclick="if(confirm('Удалить игрока и его комментарий?')){players=players.filter(x=>x.id!=='${id}');save();closeModal();render()}else closeModal()">Удалить игрока</button><button class="cancel" onclick="closeModal()">Закрыть</button>`)}function sortPlayers(){let s=document.getElementById('sorting');s.value=s.value==='time'?'default':'time';render()}function showComments(){openModal(`<h2>Комментарии игроков</h2>${players.filter(p=>p.comment).map(p=>`<p><b>${esc(p.name)}:</b> ${esc(p.comment)}</p>`).join('')||'<p class="muted">Комментариев пока нет.</p>'}<button class="cancel" onclick="closeModal()">Закрыть</button>`)}load();setInterval(()=>{if(document.getElementById('modal').style.display!=='flex')render()},1000);
+function editPlayer(id){let p=players.find(x=>x.id===id);if(!p)return;editId=id;let ms=left(p),days=Math.max(1,Math.min(200,Math.ceil(ms/86400000))),hrs=Math.floor(ms/3600000)%24,mins=Math.floor(ms/60000)%60;openModal(`<h2>✎ Игрок</h2><label>Имя</label><input id="pname" maxlength="60" value="${esc(p.name)}"><label>Фото игрока</label><input id="pavatar" type="file" accept="image/*"><label>Оставшееся время (1–200 дней)</label><input id="pdays" type="number" min="1" max="200" value="${days}"><div class="formrow"><div><label>Часы</label><input id="phours" type="number" min="0" max="23" value="${hrs}"></div><div><label>Минуты</label><input id="pmins" type="number" min="0" max="59" value="${mins}"></div></div><label>Комментарий</label><textarea id="pcomment" rows="3" maxlength="500">${esc(p.comment||'')}</textarea><div class="muted">Нажатий баффа: ${p.buffs}</div><button class="save" onclick="saveEdit()">Сохранить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
+async function saveEdit(){let p=players.find(x=>x.id===editId);if(!p)return;let name=document.getElementById('pname').value.trim()||'Без имени',days=Math.max(1,Math.min(200,parseInt(document.getElementById('pdays').value)||1)),h=Math.max(0,Math.min(23,parseInt(document.getElementById('phours').value)||0)),m=Math.max(0,Math.min(59,parseInt(document.getElementById('pmins').value)||0));p.name=name;p.end=Date.now()+((days*24+h)*60+m)*60000;p.initial=((days*24+h)*60+m)*60000;p.buffs=0;p.comment=document.getElementById('pcomment').value.trim();let photo=await readAvatar();if(photo)p.avatar=photo;save();closeModal();render()}
+function addPlayer(){if(players.length>=cfg.limit){openModal(`<h2>Лимит достигнут</h2><p>Добавлено ${players.length} из ${cfg.limit} игроков. Измени максимальное количество в настройках.</p><button class="save" onclick="closeModal();settings()">Настройки</button><button class="cancel" onclick="closeModal()">Закрыть</button>`);return}editId=null;openModal(`<h2>＋ Новый игрок</h2><label>Имя</label><input id="pname" maxlength="60" placeholder="Имя игрока"><label>Фото игрока</label><input id="pavatar" type="file" accept="image/*"><label>Таймер (1–200 дней)</label><input id="pdays" type="number" min="1" max="200" value="30"><div class="formrow"><div><label>Часы</label><input id="phours" type="number" min="0" max="23" value="0"></div><div><label>Минуты</label><input id="pmins" type="number" min="0" max="59" value="0"></div></div><label>Комментарий</label><textarea id="pcomment" rows="2" placeholder="Необязательно"></textarea><button class="save" onclick="createPlayer()">Добавить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
+async function createPlayer(){let days=Math.max(1,Math.min(200,parseInt(document.getElementById('pdays').value)||30)),h=Math.max(0,Math.min(23,parseInt(document.getElementById('phours').value)||0)),m=Math.max(0,Math.min(59,parseInt(document.getElementById('pmins').value)||0)),ms=((days*24+h)*60+m)*60000;players.push({id:cloudUUID(),name:document.getElementById('pname').value.trim()||`Игрок ${players.length+1}`,category:activeTab,end:Date.now()+ms,initial:ms,buffs:0,comment:document.getElementById('pcomment').value.trim(),avatar:await readAvatar()});save();closeModal();render()}
+function setLimit(v){cfg.limit=Math.max(1,Math.min(99,parseInt(v)||99));save();render()}function settings(){openModal(`<h2>⚙ Настройки</h2><label>Максимальное количество игроков (1–99)</label><input id="setlimit" type="number" min="1" max="99" value="${cfg.limit}"><p class="muted">При уменьшении лимита существующие игроки и их данные не удаляются.</p><button class="save" onclick="cfg.limit=Math.max(1,Math.min(99,parseInt(document.getElementById('setlimit').value)||99));save();document.getElementById('limit').value=String([10,25,50,75,99].includes(cfg.limit)?cfg.limit:99);closeModal();render()">Сохранить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}function playerMenu(id){let p=players.find(x=>x.id===id);if(!p)return;openModal(`<h2>${esc(p.name)}</h2><p>Баффов использовано: <b>${p.buffs}</b></p><button class="save" onclick="closeModal();editPlayer('${id}')">✎ Редактировать игрока</button><button class="cancel" onclick="if(confirm('Удалить игрока и его комментарий?')){players=players.filter(x=>x.id!=='${id}');cloudDeletePlayer('${id}');save();closeModal();render()}else closeModal()">Удалить игрока</button><button class="cancel" onclick="closeModal()">Закрыть</button>`)}function sortPlayers(){let s=document.getElementById('sorting');s.value=s.value==='time'?'default':'time';render()}function showComments(){openModal(`<h2>Комментарии игроков</h2>${players.filter(p=>p.comment).map(p=>`<p><b>${esc(p.name)}:</b> ${esc(p.comment)}</p>`).join('')||'<p class="muted">Комментариев пока нет.</p>'}<button class="cancel" onclick="closeModal()">Закрыть</button>`)}
+
+// Общее облачное хранилище Supabase.
+let cloudReady = false;
+let cloudChannel = null;
+let cloudLoading = false;
+let cloudReloadPending = false;
+let cloudStarting = false;
+let cloudUserId = null;
+let cloudSnapshot = new Map();
+let cloudSyncRunning = false;
+let cloudSyncAgain = false;
+
+function cloudUUID() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random()*16|0;
+    return (c==='x'?r:(r&3|8)).toString(16);
+  });
+}
+
+function cloudFingerprint(p) {
+  return JSON.stringify([
+    p.id,p.name,p.category||'construction',Math.round(p.end),
+    Math.round(p.initial||0),Number(p.buffs)||0,p.comment||'',p.avatar||null
+  ]);
+}
+
+function cloudToRow(p) {
+  return {
+    id:p.id,
+    name:p.name,
+    category:p.category||'construction',
+    end_at:Math.round(p.end),
+    initial_ms:Math.round(p.initial||0),
+    buffs:Math.max(0,Number(p.buffs)||0),
+    comment:p.comment||'',
+    avatar_url:p.avatar||null,
+    updated_at:new Date().toISOString()
+  };
+}
+
+function cloudFromRow(r) {
+  return {
+    id:r.id,
+    name:r.name,
+    category:r.category||'construction',
+    end:Number(r.end_at),
+    initial:Number(r.initial_ms)||0,
+    buffs:Number(r.buffs)||0,
+    comment:r.comment||'',
+    avatar:r.avatar_url||null
+  };
+}
+
+async function cloudLoadPlayers() {
+  if (!supabaseClient || !currentAuthSession) return;
+  if (cloudLoading) {
+    cloudReloadPending=true;
+    return;
+  }
+  cloudLoading=true;
+  try {
+    const {data,error}=await supabaseClient.from('players')
+      .select('*').order('created_at',{ascending:true});
+    if(error) throw error;
+    if(!currentAuthSession) return;
+
+    players=(data||[]).map(cloudFromRow);
+    cloudSnapshot=new Map(players.map(p=>[p.id,cloudFingerprint(p)]));
+    localStorage.setItem(KEY,JSON.stringify(players));
+    cloudReady=true;
+    render();
+    authStatus('Вход выполнен · Облако синхронизировано');
+  } catch(e) {
+    cloudReady=false;
+    authStatus('Ошибка облака: '+(e.message||e));
+    console.error('Supabase load:',e);
+  } finally {
+    cloudLoading=false;
+    if(cloudReloadPending) {
+      cloudReloadPending=false;
+      cloudLoadPlayers();
+    }
+  }
+}
+
+async function cloudSyncChanges() {
+  if(!cloudReady || !supabaseClient || !currentAuthSession) return;
+  if(cloudSyncRunning) {
+    cloudSyncAgain=true;
+    return;
+  }
+  cloudSyncRunning=true;
+  try {
+    do {
+      cloudSyncAgain=false;
+      const changed=players.filter(p=>
+        cloudSnapshot.get(p.id)!==cloudFingerprint(p)
+      );
+      if(changed.length) {
+        const {data,error}=await supabaseClient.from('players')
+          .upsert(changed.map(cloudToRow),{onConflict:'id'}).select('*');
+        if(error) throw error;
+        (data||[]).forEach(r=>{
+          const p=cloudFromRow(r);
+          cloudSnapshot.set(p.id,cloudFingerprint(p));
+        });
+      }
+      if(players.some(p=>cloudSnapshot.get(p.id)!==cloudFingerprint(p)))
+        cloudSyncAgain=true;
+    } while(cloudSyncAgain && currentAuthSession);
+  } catch(e) {
+    authStatus('Ошибка синхронизации: '+(e.message||e));
+    console.error('Supabase sync:',e);
+  } finally {
+    cloudSyncRunning=false;
+  }
+}
+
+async function cloudDeletePlayer(id) {
+  cloudSnapshot.delete(id);
+  if(!supabaseClient || !currentAuthSession || !cloudReady) return;
+  try {
+    const {error}=await supabaseClient.from('players').delete().eq('id',id);
+    if(error) throw error;
+  } catch(e) {
+    authStatus('Ошибка удаления: '+(e.message||e));
+    console.error('Supabase delete:',e);
+  }
+}
+
+async function cloudStart(session) {
+  if(!session || !session.user) {
+    cloudStop();
+    return;
+  }
+  const uid=session.user.id;
+  if(cloudUserId===uid && (cloudChannel || cloudStarting)) return;
+
+  cloudStarting=true;
+  cloudReady=false;
+  cloudUserId=uid;
+  cloudSnapshot.clear();
+  try {
+    if(cloudChannel) {
+      await supabaseClient.removeChannel(cloudChannel);
+      cloudChannel=null;
+    }
+    await cloudLoadPlayers();
+    if(!currentAuthSession || currentAuthSession.user.id!==uid) return;
+
+    cloudChannel=supabaseClient.channel('shared-players-'+uid)
+      .on('postgres_changes',{
+        event:'*',schema:'public',table:'players'
+      },()=>cloudLoadPlayers())
+      .subscribe(status=>{
+        if(status==='CHANNEL_ERROR' || status==='TIMED_OUT')
+          console.warn('Supabase Realtime:',status);
+      });
+  } catch(e) {
+    authStatus('Ошибка подключения облака: '+(e.message||e));
+    console.error('Supabase start:',e);
+  } finally {
+    cloudStarting=false;
+  }
+}
+
+function cloudStop() {
+  cloudReady=false;
+  cloudUserId=null;
+  cloudSnapshot.clear();
+  if(cloudChannel && supabaseClient) {
+    supabaseClient.removeChannel(cloudChannel);
+    cloudChannel=null;
+  }
+  players=[];
+  localStorage.setItem(KEY,'[]');
+  render();
+}
+
+// SUPABASE_TIMERPLAYERS_AUTH
+const SUPABASE_URL = 'https://rgkdpdigvdrewymqelxa.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_EofTeotpyD5bXQeEXznAeQ_ZMc5o0sO';
+const AUTH_REDIRECT = 'com.example.timerplayers://auth/callback';
+let supabaseClient = null;
+let currentAuthSession = null;
+
+function authStatus(message) {
+  const el = document.getElementById('authStatus');
+  if (el) el.textContent = message;
+}
+
+function updateAuthUI(session) {
+  currentAuthSession = session || null;
+  const login = document.getElementById('googleLogin');
+  const logout = document.getElementById('googleLogout');
+  if (session && session.user) {
+    const user = session.user;
+    authStatus('Вход выполнен: ' + (user.email || user.user_metadata?.full_name || 'Google'));
+    if (login) login.style.display = 'none';
+    if (logout) logout.style.display = 'inline-block';
+    cloudStart(session);
+  } else {
+    if (login) login.style.display = 'inline-block';
+    if (logout) logout.style.display = 'none';
+    cloudStop();
+    authStatus('Вход не выполнен');
+  }
+}
+
+try {
+  if (window.supabase && window.supabase.createClient) {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          flowType: 'pkce',
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false
+        }
+      }
+    );
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      updateAuthUI(session);
+    });
+
+    supabaseClient.auth.getSession().then(({data, error}) => {
+      if (error) authStatus('Ошибка проверки входа');
+      else updateAuthUI(data.session);
+    });
+  } else {
+    authStatus('Не удалось загрузить библиотеку входа');
+  }
+} catch (e) {
+  authStatus('Ошибка инициализации входа');
+  console.error(e);
+}
+
+async function loginGoogle() {
+  if (!supabaseClient) {
+    alert('Supabase не загрузился. Проверь подключение к интернету.');
+    return;
+  }
+  authStatus('Открываем Google...');
+  try {
+    const {data, error} = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: AUTH_REDIRECT,
+        skipBrowserRedirect: true
+      }
+    });
+    if (error) throw error;
+    if (!data || !data.url) throw new Error('Google URL не получен');
+    if (!window.AndroidBridge) {
+      throw new Error('Не найден Android-мост для открытия Google');
+    }
+    window.AndroidBridge.openExternalUrl(data.url);
+  } catch (e) {
+    authStatus('Не удалось начать вход');
+    alert('Ошибка входа: ' + (e.message || e));
+  }
+}
+
+async function logoutGoogle() {
+  if (!supabaseClient) return;
+  const {error} = await supabaseClient.auth.signOut();
+  if (error) alert('Не удалось выйти: ' + error.message);
+  else updateAuthUI(null);
+}
+
+window.handleAuthCallback = async function(callbackUrl) {
+  try {
+    const uri = new URL(callbackUrl);
+    const errorText = uri.searchParams.get('error_description') ||
+                      uri.searchParams.get('error');
+    if (errorText) {
+      authStatus('Ошибка входа через Google');
+      alert('Google: ' + errorText);
+      return;
+    }
+    const code = uri.searchParams.get('code');
+    if (!code) {
+      authStatus('В ответе Google нет кода авторизации');
+      return;
+    }
+    authStatus('Завершаем вход...');
+    const {data, error} = await supabaseClient.auth.exchangeCodeForSession(code);
+    if (error) throw error;
+    updateAuthUI(data.session);
+    authStatus('Вход выполнен');
+  } catch (e) {
+    authStatus('Ошибка завершения входа');
+    alert('Не удалось завершить вход: ' + (e.message || e));
+  }
+};
+
+load();setInterval(()=>{if(document.getElementById('modal').style.display!=='flex')render()},1000);
 </script></body></html>
