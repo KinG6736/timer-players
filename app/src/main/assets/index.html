@@ -677,20 +677,20 @@ function switchTab(tab){
     else render();
 }
 
-let usedBuffPlayerIds = new Set();
+let usedBuffCategories = new Set();
 let buffUsageLoaded = false;
 
 async function refreshBuffUsage(){
-  usedBuffPlayerIds.clear();
+  usedBuffCategories.clear();
   buffUsageLoaded=false;
   if(!supabaseClient||!currentAuthSession){
     render();
     return;
   }
   try{
-    const {data,error}=await supabaseClient.rpc('get_player_buff_used_today');
+    const {data,error}=await supabaseClient.rpc('get_player_buff_used_categories');
     if(error)throw error;
-    usedBuffPlayerIds=new Set((data||[]).map(r=>String(r.player_id)));
+    usedBuffCategories=new Set((data||[]).map(r=>String(r.category)));
     buffUsageLoaded=true;
   }catch(e){
     console.error('Buff usage load:',e);
@@ -698,7 +698,7 @@ async function refreshBuffUsage(){
   render();
 }
 
-function render(){players.forEach(p=>{p.buffs=Math.max(0,Number(p.buffs)||0);p.total_buffs=Math.max(0,Number(p.total_buffs)||0)});let q=(document.getElementById('search')?.value||'').toLowerCase(),mode=window.timeSortMode||'time';let arr=players.filter(p=>(p.category||'construction')===activeTab&&(p.name+' '+p.comment).toLowerCase().includes(q));if(mode==='time')arr.sort((a,b)=>left(a)-left(b));if(mode==='timeDesc')arr.sort((a,b)=>left(b)-left(a));if(mode==='buff')arr.sort((a,b)=>b.buffs-a.buffs);if(mode==='name')arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));if(mode==='default')arr.sort((a,b)=>players.indexOf(a)-players.indexOf(b));document.getElementById('total').textContent=`Всего: ${players.filter(p=>(p.category||'construction')===activeTab).length} / ${cfg.limit}`;document.getElementById('list').innerHTML=arr.length?arr.map((p)=>{let ms=left(p),pct=p.initial>0?Math.max(0,Math.min(100,ms/p.initial*100)):0,color=pct>50?'#00d98b':pct>20?'#f5bd20':'#ff354f',n=arr.indexOf(p)+1,isOwner=!!(currentAuthSession&&currentAuthSession.user&&(p.linkedUserId===currentAuthSession.user.id||p.created_by===currentAuthSession.user.id)),locked=!buffUsageLoaded||!currentAuthSession||isOwner||usedBuffPlayerIds.size>0;return `<article class="player"><div class="avatar">${p.avatar?`<img class="avatar-img" src="${p.avatar}" alt="">`:avatar(p.name)}</div><div class="main"><div class="nameRow"><span class="name">${esc(p.name)}</span><span class="count">${p.buffs} бафф${plural(p.buffs)}</span><span class="count">Всего: ${Number(p.total_buffs)||0}</span>${isOwner?`<button class="pencil name-pencil" onclick="playerMenu('${p.id}')" aria-label="Меню игрока">✎</button>`:''}</div><div class="time">${fmt(ms)}</div><div class="progressrow"><div class="track"><div class="bar" style="width:${pct}%;background:${color}"></div></div><span class="pct" style="color:${color}">${Math.round(pct)}%</span></div><div class="comment"><span class="comment-icon">☏</span><span class="comment-text">${esc(p.comment||'Без комментария')}</span></div></div><div class="actions">${isOwner?'':`<button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',5)">⚡ −5%</button><button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',10)">⚡ −10%</button><button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',15)">⚡ −15%</button>`}</article>`}).join(''):'<div class="empty">Игроки не найдены</div>'}
+function render(){players.forEach(p=>{p.buffs=Math.max(0,Number(p.buffs)||0);p.total_buffs=Math.max(0,Number(p.total_buffs)||0)});let q=(document.getElementById('search')?.value||'').toLowerCase(),mode=window.timeSortMode||'time';let arr=players.filter(p=>(p.category||'construction')===activeTab&&(p.name+' '+p.comment).toLowerCase().includes(q));if(mode==='time')arr.sort((a,b)=>left(a)-left(b));if(mode==='timeDesc')arr.sort((a,b)=>left(b)-left(a));if(mode==='buff')arr.sort((a,b)=>b.buffs-a.buffs);if(mode==='name')arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));if(mode==='default')arr.sort((a,b)=>players.indexOf(a)-players.indexOf(b));document.getElementById('total').textContent=`Всего: ${players.filter(p=>(p.category||'construction')===activeTab).length} / ${cfg.limit}`;document.getElementById('list').innerHTML=arr.length?arr.map((p)=>{let ms=left(p),pct=p.initial>0?Math.max(0,Math.min(100,ms/p.initial*100)):0,color=pct>50?'#00d98b':pct>20?'#f5bd20':'#ff354f',n=arr.indexOf(p)+1,isOwner=!!(currentAuthSession&&currentAuthSession.user&&(p.linkedUserId===currentAuthSession.user.id||p.created_by===currentAuthSession.user.id)),locked=!buffUsageLoaded||!currentAuthSession||isOwner||usedBuffCategories.has(p.category||'construction');return `<article class="player"><div class="avatar">${p.avatar?`<img class="avatar-img" src="${p.avatar}" alt="">`:avatar(p.name)}</div><div class="main"><div class="nameRow"><span class="name">${esc(p.name)}</span><span class="count">${p.buffs} бафф${plural(p.buffs)}</span><span class="count">Всего: ${Number(p.total_buffs)||0}</span>${isOwner?`<button class="pencil name-pencil" onclick="playerMenu('${p.id}')" aria-label="Меню игрока">✎</button>`:''}</div><div class="time">${fmt(ms)}</div><div class="progressrow"><div class="track"><div class="bar" style="width:${pct}%;background:${color}"></div></div><span class="pct" style="color:${color}">${Math.round(pct)}%</span></div><div class="comment"><span class="comment-icon">☏</span><span class="comment-text">${esc(p.comment||'Без комментария')}</span></div></div><div class="actions">${isOwner?'':`<button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',5)">⚡ −5%</button><button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',10)">⚡ −10%</button><button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',15)">⚡ −15%</button>`}</article>`}).join(''):'<div class="empty">Игроки не найдены</div>'}
 function plural(n){let x=n%10,y=n%100;return x===1&&y!==11?'':'ов'}function pluralTimes(n){return n===1?'раз':'раз'}function avatar(name){let icons={'Монах':'🥷','Войтель':'🧝🏻‍♀️','Саймон':'🧑🏻','Креон':'👹','Луна':'🧝🏻‍♀️','Тень':'🌑','Гром':'🧔🏻','Роза':'🌹','Ворон':'🦅','Снежная':'❄️'};return icons[name]||'👤'}function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function buff(id,percent){
   const p=players.find(x=>String(x.id)===String(id));
@@ -714,6 +714,7 @@ try{
     });
     if(error)throw error;
     await cloudLoadPlayers();
+    await refreshBuffUsage();
     alert('Бафф успешно применён.');
   }catch(e){
     alert(e.message||'Не удалось применить бафф.');
