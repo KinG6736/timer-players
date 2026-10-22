@@ -653,7 +653,7 @@ function load(){
   try { cfg={...cfg,...JSON.parse(localStorage.getItem(SETTINGS)||'{}')}; }
   catch(e) {}
   players=[];
-  document.getElementById('limit').value=String(cfg.limit);
+  const limitInput=document.getElementById('limit');if(limitInput)limitInput.value=String(cfg.limit);
   render();
 }
 function save(){
