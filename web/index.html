@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#071321"><title>Таймеры игроков</title>
+<style>
+:root{color-scheme:dark;--bg:#071321;--panel:#0b1a2b;--line:#183652;--muted:#8fb3df;--green:#00d98b;--blue:#1688ff}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#06111f,#08182a);color:#eff6ff;font-family:system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:14px;padding-bottom:16px}.top{padding:18px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.logo{font-size:28px;background:#102e50;border-radius:50%;padding:8px}.head{flex:1;min-width:0}.head h1{font-size:20px;margin:0;font-weight:800}.sub{color:var(--muted);font-size:13px;margin-top:3px}.gear,.iconbtn{background:#10243b;border:1px solid #21466c;color:#c4ddff;border-radius:12px;padding:10px;font-size:19px}.searchrow{display:flex;gap:8px;padding:10px 12px}.searchrow input{flex:1;min-width:0}.controls{display:flex;gap:8px;padding:0 12px 10px}.controls select{width:50%;min-width:0}input,select,textarea{background:#0d2035;color:#eaf4ff;border:1px solid #214466;border-radius:11px;padding:10px;font:inherit;outline:none}button{font:inherit;cursor:pointer}.list{padding:0 10px;display:grid;gap:8px}.player{background:linear-gradient(110deg,#0d1d30,#0a1929);border:1px solid #153653;border-radius:17px;padding:10px;display:grid;grid-template-columns:34px 48px minmax(0,1fr) 42px;gap:8px;align-items:center}.num{font-weight:800;color:#9bc4ff;font-size:15px;align-self:start;padding-top:4px}.avatar{width:80px;height:80px;border-radius:50%;background:#173d60;display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid #31618b}.main{min-width:0}.nameRow{display:flex;align-items:center;gap:6px;flex-wrap:wrapwidth:100%;}.name{font-size:15px;font-weight:700;overflow-wrap:anywhere}.count{font-size:11px;color:#00efaa;border:1px solid #008e68;background:#003c34;border-radius:99px;padding:2px 6px;white-space:nowrap}.time{font-size:14px;font-weight:700;letter-spacing:.1px;margin:2px 0 5px;white-space:nowrap}.progressrow{display:flex;align-items:center;gap:7px}.track{height:8px;flex:1;min-width:15px;background:#19314e;border-radius:99px;overflow:hidden}.bar{height:100%;border-radius:99px;transition:width .3s}.pct{width:31px;text-align:right;font-weight:800;font-size:12px}.comment{font-size:11px;color:#8fc5f7;margin-top:5px;height:16px;line-height:16px;display:flex;align-items:flex-start;justify-content:flex-start;gap:4px;overflow:hidden;white-space:nowrap;width:100%;min-width:0;text-align:left!important}.comment-icon{flex:0 0 12px;width:12px;text-align:left!important;line-height:16px}.comment-text{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;line-height:16px;margin:0;padding:0;align-self:center}.comment.empty{opacity:.7;text-align:left!important}.actions{display:flex;flex-direction:column;align-items:stretch;gap:5px}.buff{border:1px solid #00ef9a;background:linear-gradient(135deg,#00bd7a,#007d58);color:white;border-radius:11px;padding:9px 4px;font-size:11px;font-weight:800;white-space:nowrap}.buff small{display:block;color:#c9ffeb;font-size:9px;font-weight:500;margin-top:3px}.pencil{border:1px solid #234c73;background:#10243b;color:#c3ddff;border-radius:10px;height:35px;font-size:19px}.more{background:transparent;border:0;color:#a7c8f5;font-size:20px;height:25px}.fab{position:fixed;right:14px;bottom:64px;background:#087cff;color:white;border:0;border-radius:99px;padding:12px 18px;box-shadow:0 5px 20px #001a3d;font-weight:700}.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#081626;border-top:1px solid #173956;padding:8px 0 10px;color:#8caed5}.nav div{text-align:center;font-size:11px}.nav b{display:block;font-size:19px;margin-bottom:2px}.nav .active{color:#168bff}.empty{text-align:center;color:var(--muted);padding:28px}.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.dialog{width:100%;max-width:420px;background:#0b1a2b;border:1px solid #285178;border-radius:18px;padding:18px;display:grid;gap:10px;max-height:90vh;overflow:auto}.dialog h2{margin:0 0 4px}.dialog label{color:#a9c7e9;font-size:12px}.dialog input,.dialog textarea,.dialog select{width:100%}.formrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.save{background:#087cff;border:0;color:white;border-radius:11px;padding:12px;font-weight:700}.cancel{background:#132a43;border:1px solid #25486a;color:#cce1fa;border-radius:11px;padding:11px}.muted{color:#88aaca;font-size:12px}
+@media(min-width:600px){.list{max-width:850px;margin:auto}.top,.searchrow,.controls{max-width:850px;margin-left:auto;margin-right:auto}.player{grid-template-columns:40px 52px minmax(0,1fr) 48px}.avatar{width:50px;height:50px}.name{font-size:16px}.time{font-size:15px}.buff{font-size:12px;padding:10px 6px}}
+.avatar{overflow:hidden;flex-shrink:0}.avatar-img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+/* Адаптация под разные размеры экрана */
+.avatar{overflow:hidden;flex-shrink:0}
+.avatar-img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+@media(max-width:420px){
+  .player{gap:7px;padding:9px 7px}
+  .avatar{width:38px;height:38px}
+  .actions{gap:4px}
+  .count{font-size:10px}
+  .time{font-size:clamp(16px,4.5vw,22px)}
+}
+@media(orientation:landscape) and (min-width:600px){
+  #list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+  .player{min-width:0;gap:8px;padding:10px}
+  .main{min-width:0}
+  .actions{gap:4px}
+  .modal{max-height:90vh;overflow-y:auto}
+}
+
+
+/* Компактная карточка игрока и широкая кнопка баффа */
+@media (max-width: 420px) {
+  .player {
+    grid-template-columns: 20px 32px minmax(0, 1fr) 105px;
+    gap: 4px;
+    padding: 6px;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+  }
+  .num { font-size: 11px; padding-top: 2px; }
+  .actions { gap: 4px; }
+  .buff {
+    width: 105px;
+    padding: 7px 3px;
+    font-size: 11px;
+  }
+  .buff small { font-size: 8px; margin-top: 2px; }
+  .pencil { height: 28px; font-size: 16px; }
+  .more { height: 20px; font-size: 17px; }
+  .name { font-size: 13px; }
+  .count { font-size: 9px; padding: 1px 4px; }
+  .time { font-size: 12px; margin: 2px 0 4px; }
+  .track { height: 6px; }
+  .pct { width: 25px; font-size: 10px; }
+  .comment { font-size: 10px; }
+}
+
+
+/* Прямоугольные кнопки баффа и карандаша */
+@media (max-width: 420px) {
+  .player {
+    grid-template-columns: 20px 30px minmax(0, 1fr) 120px !important;
+    gap: 4px;
+  }
+  .actions {
+    width: 120px;
+    gap: 5px;
+    align-items: stretch;
+  }
+  .actions .buff,
+  .actions .pencil {
+    width: 120px !important;
+    box-sizing: border-box;
+    border-radius: 5px !important;
+  }
+  .actions .buff {
+    min-height: 42px;
+    padding: 7px 4px;
+  }
+  .actions .pencil {
+    height: 36px;
+    min-height: 36px;
+    font-size: 20px;
+  }
+}
+
+
+/* ФИНАЛЬНОЕ ИСПРАВЛЕНИЕ КНОПОК */
+@media (max-width: 600px) {
+  .player {
+    grid-template-columns: 20px 30px minmax(0, 1fr) 88px !important;
+    gap: 4px !important;
+    padding: 8px 6px !important;
+  }
+  .actions {
+    width: 88px !important;
+    min-width: 0 !important;
+    gap: 5px !important;
+  }
+  .actions .buff,
+  .actions .pencil {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+  }
+  .actions .buff {
+    min-height: 42px !important;
+    padding: 7px 2px !important;
+    font-size: 11px !important;
+  }
+  .actions .buff small {
+    font-size: 9px !important;
+  }
+  .actions .pencil {
+    height: 36px !important;
+    min-height: 36px !important;
+    font-size: 20px !important;
+  }
+}
+
+
+/* УМЕНЬШЕНИЕ ПОЛОСКИ ПРОЦЕНТОВ */
+@media (max-width: 600px) {
+  .progressrow {
+    gap: 4px !important;
+    min-width: 0 !important;
+  }
+  .track {
+    flex: 1 1 0 !important;
+    min-width: 8px !important;
+  }
+  .pct {
+    flex: 0 0 25px !important;
+    width: 25px !important;
+    font-size: 10px !important;
+  }
+}
+
+
+/* УМЕНЬШЕНИЕ СРЕДНЕГО БЛОКА */
+@media (max-width: 600px) {
+  .player {
+    grid-template-columns: 22px 36px minmax(0, 1fr) 88px !important;
+    column-gap: 4px !important;
+  }
+  .main {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  .nameRow, .progressrow {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .comment {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+
+/* ИСПРАВЛЕННАЯ СЕТКА КАРТОЧКИ */
+@media (max-width: 600px) {
+  .player {
+    display: grid !important;
+    grid-template-columns: 20px 30px minmax(0, 1fr) 88px !important;
+    column-gap: 4px !important;
+    padding: 7px 5px !important;
+    min-width: 0 !important;
+  }
+  .avatar {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 0 !important;
+    font-size: 17px !important;
+  }
+  .main {
+    grid-column: 3 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  .actions {
+    grid-column: 4 !important;
+    width: 88px !important;
+    min-width: 0 !important;
+  }
+  .actions .buff,
+  .actions .pencil {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .nameRow, .progressrow {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .count {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .time {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    font-size: 12px !important;
+  }
+  .track {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  .pct {
+    flex: 0 0 25px !important;
+    width: 25px !important;
+    font-size: 10px !important;
+  }
+  .comment {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+
+/* КВАДРАТНАЯ АВАТАРКА */
+@media (max-width: 600px) {
+  .player {
+    grid-template-columns: 20px 67px minmax(0, 1fr) 88px !important;
+  }
+  .avatar {
+    width: 65px !important;
+    height: 65px !important;
+    min-width: 65px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    font-size: 23px !important;
+  }
+  .avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+  }
+}
+
+
+/* КОМПАКТНЫЕ КНОПКИ ПО ВЫСОТЕ АВАТАРКИ */
+@media (max-width: 600px) {
+  .actions {
+    height: 65px !important;
+    width: 88px !important;
+    gap: 3px !important;
+    justify-content: stretch !important;
+  }
+  .actions .buff {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 3px 2px !important;
+    line-height: 13px !important;
+    font-size: 10px !important;
+  }
+  .actions .buff small {
+    margin-top: 1px !important;
+    font-size: 8px !important;
+    line-height: 9px !important;
+  }
+  .actions .pencil {
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 0 !important;
+    line-height: 24px !important;
+    font-size: 17px !important;
+  }
+}
+
+
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  width: 100%;
+}
+.category-tab {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 5px;
+  border: 1px solid #214466;
+  border-radius: 10px;
+  background: #0d2035;
+  color: #a9c7e9;
+  font-size: 12px;
+  font-weight: 700;
+}
+.category-tab.active {
+  background: #103b5c;
+  border-color: #1688ff;
+  color: #ffffff;
+}
+@media (min-width: 600px) {
+  .category-tabs {
+    max-width: 850px;
+    margin: auto;
+  }
+}
+
+
+/* ГОРИЗОНТАЛЬНЫЙ РЕЖИМ КАК В ВЕРТИКАЛЬНОМ */
+@media (orientation: landscape) and (max-height: 600px) {
+  .category-tabs {
+    width: calc(100% - 128px) !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+  }
+  .list {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: calc(100% - 128px) !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;}
+  .player {
+    display: grid !important;
+    grid-template-columns: 20px 67px minmax(0, 1fr) 88px !important;
+    column-gap: 4px !important;
+    padding: 7px 5px !important;
+    min-width: 0 !important;
+  }
+  .avatar {
+    width: 65px !important;
+    height: 65px !important;
+    min-width: 65px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+  .avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+  }
+  .main {
+    grid-column: 3 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  .nameRow, .progressrow {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .count {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .time {
+    font-size: 12px !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .track {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  .pct {
+    flex: 0 0 25px !important;
+    width: 25px !important;
+    font-size: 10px !important;
+  }
+  .comment {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .actions {
+    grid-column: 4 !important;
+    width: 88px !important;
+    height: 65px !important;
+    min-width: 0 !important;
+    gap: 3px !important;
+  }
+  .actions .buff {
+    width: 100% !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 3px 2px !important;
+    line-height: 13px !important;
+    font-size: 10px !important;
+  }
+  .actions .buff small {
+    margin-top: 1px !important;
+    font-size: 8px !important;
+    line-height: 9px !important;
+  }
+  .actions .pencil {
+    width: 100% !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 0 !important;
+    line-height: 24px !important;
+    font-size: 17px !important;
+  }
+}
+
+
+/* TIMERPLAYERS_AUTH_STYLE_V1 */
+#SUPABASE_TIMERPLAYERS_AUTH {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  margin: 10px 12px 14px !important;
+  padding: 16px !important;
+  width: auto !important;
+  border: 1px solid var(--border-color, rgba(128,128,128,.25)) !important;
+  border-radius: 18px !important;
+  background: var(--card-bg, rgba(128,128,128,.07)) !important;
+}
+#SUPABASE_TIMERPLAYERS_AUTH button {
+  box-sizing: border-box !important;
+  min-height: 44px !important;
+  padding: 11px 14px !important;
+  border-radius: 11px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+}
+#SUPABASE_TIMERPLAYERS_AUTH #googleLogin {
+  width: 100% !important;
+  min-height: 48px !important;
+  order: 0;
+  background: #fff !important;
+  color: #202124 !important;
+  border: 1px solid #dadce0 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+#SUPABASE_TIMERPLAYERS_AUTH #authStatus {
+  display: block;
+  padding: 2px 3px;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+#SUPABASE_TIMERPLAYERS_AUTH #googleLogout {
+  width: 100% !important;
+  background: #22c55e !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  font-weight: bold !important;
+}
+@media (min-width: 520px) {
+  #SUPABASE_TIMERPLAYERS_AUTH {
+    max-width: 520px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+
+/* Настройка расположения блока игрока */
+.player {
+  grid-template-columns: 38px minmax(0, 1fr) 42px;
+  column-gap: 5px;
+}
+.player .main {
+  margin-left: 0 !important;
+}
+.player .buff small {
+  display: none !important;
+}
+
+
+
+
+
+
+/* TIMERPLAYERS_CARD_LAYOUT_V2 */
+.player {
+  display: grid !important;
+  grid-template-columns: 96px minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  grid-auto-flow: row !important;
+  align-items: center !important;
+  column-gap: 10px !important;
+  row-gap: 8px !important;
+  padding: 10px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+.player .actions {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+.player .actions .buff {
+  flex: 1 1 0 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 3px 2px !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+.player .actions .buff small {
+  display: none !important;
+}
+.player .actions .pencil {
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 !important;
+  font-size: 17px !important;
+}
+.player .avatar {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  width: 68px !important;
+  height: 68px !important;
+  margin: 0 !important;
+  justify-self: center !important;
+  align-self: center !important;
+}
+.player .main {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.player .nameRow,
+.player .progressrow {
+  display: flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+.player .nameRow {
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+.player .time {
+  white-space: nowrap !important;
+  margin: 3px 0 !important;
+}
+.player .track {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+.player .pct {
+  flex: 0 0 32px !important;
+  width: 32px !important;
+}
+.player .comment {
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+
+/* AVATAR_SIZE_PLUS_30_FIXED */
+.player .avatar {
+  width: 88px !important;
+  height: 88px !important;
+  min-width: 88px !important;
+  min-height: 88px !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  justify-self: center !important;
+  align-self: center !important;
+}
+.player .avatar-img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+}
+.buff:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(1)}
+</style></head><body>
+<header class="top"><div class="logo">👥</div><div class="head"><h1>Таймеры игроков</h1><div class="sub" id="total">Всего: 0 / 99</div></div><button class="gear" onclick="settings()" aria-label="Настройки">⚙</button></header>
+<div id="SUPABASE_TIMERPLAYERS_AUTH" style="padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+  <div id="authLoginPanel" style="display:flex;flex-direction:column;gap:12px;width:100%">
+  <button id="telegramLogin" type="button" onclick="loginTelegram()" style="padding:10px 14px;border-radius:10px;border:0;background:#229ED9;color:white;font-weight:bold">Войти через Telegram</button>
+<button id="googleLogin" type="button" onclick="loginGoogle()" style="padding:10px 14px;border-radius:10px;border:0;background:#2388ff;color:white;font-weight:bold">Войти через Google</button>
+
+  </div>
+  <span id="authStatus" style="font-size:12px;opacity:.8">Вход не выполнен</span>
+  <button id="googleLogout" type="button" onclick="logoutGoogle()" style="display:none;padding:8px;border-radius:8px">Выйти</button>
+</div>
+<div class="searchrow"><input id="search" placeholder="⌕  Поиск игрока..." oninput="render()"><button id="sortTimeBtn" class="iconbtn" onclick="sortPlayers()" title="Сортировка по времени" aria-label="Сортировка по времени">↓</button></div>
+
+<div class="category-tabs">
+<button type="button" id="tab-construction" class="category-tab active" onclick="switchTab('construction')">🏗 Строительство</button>
+<button type="button" id="tab-research" class="category-tab" onclick="switchTab('research')">🔬 Исследования</button>
+<button type="button" id="tab-chat" class="category-tab" onclick="switchTab('chat')">💬 Чат</button>
+</div>
+<div id="chatPanel" style="display:none;padding:12px">
+<div id="chatStatus" style="color:#8fb3df;font-size:12px;margin-bottom:8px">Войдите через Google, чтобы пользоваться чатом</div>
+<div id="chatMessages" style="height:55vh;overflow-y:auto;border:1px solid #183652;border-radius:12px;padding:10px;background:#0b1a2b;display:flex;flex-direction:column;gap:8px"></div>
+<form id="chatForm" style="display:flex;gap:8px;margin-top:10px">
+<input id="chatInput" maxlength="1000" placeholder="Написать сообщение..." style="flex:1;min-width:0" autocomplete="off">
+<button type="submit" class="save">➤</button>
+</form>
+</div>
+<main class="list" id="list"></main><button class="fab" onclick="addPlayer()">＋ Добавить</button>
+<div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const KEY='timerPlayers.v1', SETTINGS='timerPlayers.settings';let players=[],activeTab='construction',cfg={limit:99},editId=null,sortFlip=false;
+function load(){
+  try { cfg={...cfg,...JSON.parse(localStorage.getItem(SETTINGS)||'{}')}; }
+  catch(e) {}
+  players=[];
+  const limitInput=document.getElementById('limit');if(limitInput)limitInput.value=String(cfg.limit);
+  render();
+}
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(players));
+  localStorage.setItem(SETTINGS,JSON.stringify(cfg));
+  if(cloudReady) cloudSyncChanges();
+}function left(p){return Math.max(0,p.end-Date.now())}function fmt(ms){let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return `${d} д. ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function readAvatar(){return new Promise(resolve=>{let input=document.getElementById('pavatar'),file=input?.files?.[0];if(!file){resolve(null);return}let reader=new FileReader();reader.onload=()=>{let img=new Image();img.onload=()=>{let c=document.createElement('canvas');c.width=c.height=192;let x=c.getContext('2d'),side=Math.min(img.width,img.height);x.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,192,192);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=()=>resolve(null);img.src=reader.result};reader.onerror=()=>resolve(null);reader.readAsDataURL(file)})}
+function switchTab(tab){
+    if(!['construction','research','chat'].includes(tab))return;
+    activeTab=tab;
+    document.getElementById('tab-construction').classList.toggle('active',tab==='construction');
+    document.getElementById('tab-research').classList.toggle('active',tab==='research');
+    document.getElementById('tab-chat').classList.toggle('active',tab==='chat');
+    const chatting=tab==='chat';
+    document.getElementById('chatPanel').style.display=chatting?'block':'none';
+    document.getElementById('list').style.display=chatting?'none':'';
+    document.querySelector('.searchrow').style.display=chatting?'none':'';
+    document.querySelector('.fab').style.display=chatting?'none':'';
+    if(chatting)initChat();
+    else render();
+}
+
+let usedBuffCategories = new Set();
+let buffUsageLoaded = false;
+
+async function refreshBuffUsage(){
+  usedBuffCategories.clear();
+  buffUsageLoaded=false;
+  if(!supabaseClient||!currentAuthSession){
+    render();
+    return;
+  }
+  try{
+    const {data,error}=await supabaseClient.rpc('get_player_buff_used_categories');
+    if(error)throw error;
+    usedBuffCategories=new Set((data||[]).map(r=>String(r.category)));
+    buffUsageLoaded=true;
+  }catch(e){
+    console.error('Buff usage load:',e);
+  }
+  render();
+}
+
+function render(){players.forEach(p=>{p.buffs=Math.max(0,Number(p.buffs)||0);p.total_buffs=Math.max(0,Number(p.total_buffs)||0)});let q=(document.getElementById('search')?.value||'').toLowerCase(),mode=window.timeSortMode||'time';let arr=players.filter(p=>(p.category||'construction')===activeTab&&(p.name+' '+p.comment).toLowerCase().includes(q));if(mode==='time')arr.sort((a,b)=>left(a)-left(b));if(mode==='timeDesc')arr.sort((a,b)=>left(b)-left(a));if(mode==='buff')arr.sort((a,b)=>b.buffs-a.buffs);if(mode==='name')arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));if(mode==='default')arr.sort((a,b)=>players.indexOf(a)-players.indexOf(b));document.getElementById('total').textContent=`Всего: ${players.filter(p=>(p.category||'construction')===activeTab).length} / ${cfg.limit}`;document.getElementById('list').innerHTML=arr.length?arr.map((p)=>{let ms=left(p),pct=p.initial>0?Math.max(0,Math.min(100,ms/p.initial*100)):0,color=pct>50?'#00d98b':pct>20?'#f5bd20':'#ff354f',n=arr.indexOf(p)+1,isOwner=!!(currentAuthSession&&currentAuthSession.user&&(p.linkedUserId===currentAuthSession.user.id||p.created_by===currentAuthSession.user.id)),locked=!buffUsageLoaded||!currentAuthSession||isOwner||usedBuffCategories.has(p.category||'construction');return `<article class="player" data-player-id="${esc(String(p.id))}"><div class="avatar">${p.avatar?`<img class="avatar-img" src="${p.avatar}" alt="">`:avatar(p.name)}</div><div class="main"><div class="nameRow"><span class="name">${esc(p.name)}</span><span class="count">${p.buffs} бафф${plural(p.buffs)}</span><span class="count">Всего: ${Number(p.total_buffs)||0}</span>${isOwner?`<button class="pencil name-pencil" onclick="playerMenu('${p.id}')" aria-label="Меню игрока">✎</button>`:''}</div><div class="time">${fmt(ms)}</div><div class="progressrow"><div class="track"><div class="bar" style="width:${pct}%;background:${color}"></div></div><span class="pct" style="color:${color}">${Math.round(pct)}%</span></div><div class="comment"><span class="comment-icon">☏</span><span class="comment-text">${esc(p.comment||'Без комментария')}</span></div></div><div class="actions">${isOwner?'':`<button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',5)">⚡ −5%</button><button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',10)">⚡ −10%</button><button class="buff" ${locked?'disabled':''} onclick="buff('${p.id}',15)">⚡ −15%</button>`}</article>`}).join(''):'<div class="empty">Игроки не найдены</div>'}
+function plural(n){let x=n%10,y=n%100;return x===1&&y!==11?'':'ов'}function pluralTimes(n){return n===1?'раз':'раз'}function avatar(name){let icons={'Монах':'🥷','Войтель':'🧝🏻‍♀️','Саймон':'🧑🏻','Креон':'👹','Луна':'🧝🏻‍♀️','Тень':'🌑','Гром':'🧔🏻','Роза':'🌹','Ворон':'🦅','Снежная':'❄️'};return icons[name]||'👤'}function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function buff(id,percent){
+  const p=players.find(x=>String(x.id)===String(id));
+  percent=Number(percent);
+  if(!p||![5,10,15].includes(percent))return;
+  if(!currentAuthSession||!supabaseClient){
+    alert('Войди в аккаунт, чтобы использовать бафф.');
+    return;
+  }
+try{
+    const {error}=await supabaseClient.rpc('apply_player_buff',{
+      p_player_id:id,p_percent:percent
+    });
+    if(error)throw error;
+    await cloudLoadPlayers();
+    await refreshBuffUsage();
+    alert('Бафф успешно применён.');
+  }catch(e){
+    alert(e.message||'Не удалось применить бафф.');
+  }
+}function openModal(html){document.getElementById('dialog').innerHTML=html;document.getElementById('modal').style.display='flex'}function closeModal(){document.getElementById('modal').style.display='none'}document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+function editPlayer(id){let p=players.find(x=>x.id===id);if(!p)return;editId=id;let ms=left(p),days=Math.max(1,Math.min(200,Math.ceil(ms/86400000))),hrs=Math.floor(ms/3600000)%24,mins=Math.floor(ms/60000)%60;openModal(`<h2>✎ Игрок</h2><label>Имя</label><input id="pname" maxlength="60" value="${esc(p.name)}"><label>Фото игрока</label><input id="pavatar" type="file" accept="image/*"><label>Оставшееся время (1–200 дней)</label><input id="pdays" type="number" min="1" max="200" value="${days}"><div class="formrow"><div><label>Часы</label><input id="phours" type="number" min="0" max="23" value="${hrs}"></div><div><label>Минуты</label><input id="pmins" type="number" min="0" max="59" value="${mins}"></div></div><label>Комментарий</label><textarea id="pcomment" rows="3" maxlength="500">${esc(p.comment||'Без комментария')}</textarea><div class="muted">Нажатий баффа: ${p.buffs}</div><button class="save" onclick="saveEdit()">Сохранить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
+async function saveEdit(){let p=players.find(x=>x.id===editId);if(!p)return;let name=document.getElementById('pname').value.trim()||'Без имени',days=Math.max(1,Math.min(200,parseInt(document.getElementById('pdays').value)||1)),h=Math.max(0,Math.min(23,parseInt(document.getElementById('phours').value)||0)),m=Math.max(0,Math.min(59,parseInt(document.getElementById('pmins').value)||0));p.name=name;p.end=Date.now()+((days*24+h)*60+m)*60000;p.initial=((days*24+h)*60+m)*60000;p.buffs=0;p.comment=document.getElementById('pcomment').value.trim();let photo=await readAvatar();if(photo)p.avatar=photo;save();closeModal();render()}
+function addPlayer(){if(players.length>=cfg.limit){openModal(`<h2>Лимит достигнут</h2><p>Добавлено ${players.length} из ${cfg.limit} игроков. Измени максимальное количество в настройках.</p><button class="save" onclick="closeModal();settings()">Настройки</button><button class="cancel" onclick="closeModal()">Закрыть</button>`);return}editId=null;openModal(`<h2>＋ Новый игрок</h2><label>Имя</label><input id="pname" maxlength="60" placeholder="Имя игрока"><label>Фото игрока</label><input id="pavatar" type="file" accept="image/*"><label>Таймер (1–200 дней)</label><input id="pdays" type="number" min="1" max="200" value="30"><div class="formrow"><div><label>Часы</label><input id="phours" type="number" min="0" max="23" value="0"></div><div><label>Минуты</label><input id="pmins" type="number" min="0" max="59" value="0"></div></div><label>Комментарий</label><textarea id="pcomment" rows="2" placeholder="Необязательно"></textarea><button class="save" onclick="createPlayer()">Добавить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
+async function createPlayer(){
+if(!currentAuthSession||!currentAuthSession.user){
+alert('Для создания карточки сначала войди в аккаунт.');
+return;
+}
+if((activeTab==='construction'||activeTab==='research')&&players.some(p=>p.category===activeTab&&p.linkedUserId===currentAuthSession.user.id)){
+alert(activeTab==='construction'
+?'У твоего аккаунта уже есть карточка в разделе «Строительство».'
+:'У твоего аккаунта уже есть карточка в разделе «Исследования».');
+return;
+}
+let days=Math.max(1,Math.min(200,parseInt(document.getElementById('pdays').value)||30)),h=Math.max(0,Math.min(23,parseInt(document.getElementById('phours').value)||0)),m=Math.max(0,Math.min(59,parseInt(document.getElementById('pmins').value)||0)),ms=((days*24+h)*60+m)*60000;players.push({id:cloudUUID(),linkedUserId:currentAuthSession.user.id,name:document.getElementById('pname').value.trim()||`Игрок ${players.length+1}`,category:activeTab,end:Date.now()+ms,initial:ms,buffs:0,total_buffs:0,comment:document.getElementById('pcomment').value.trim(),avatar:await readAvatar()});save();closeModal();render()}
+function setLimit(v){cfg.limit=Math.max(1,Math.min(99,parseInt(v)||99));save();render()}function settings(){openModal(`<h2>⚙ Настройки</h2><label>Максимальное количество игроков (1–99)</label><input id="setlimit" type="number" min="1" max="99" value="${cfg.limit}"><p class="muted">При уменьшении лимита существующие игроки и их данные не удаляются.</p><button class="save" onclick="cfg.limit=Math.max(1,Math.min(99,parseInt(document.getElementById('setlimit').value)||99));save();document.getElementById('limit').value=String([10,25,50,75,99].includes(cfg.limit)?cfg.limit:99);closeModal();render()">Сохранить</button><button class="cancel" onclick="closeModal()">Отмена</button>`)}
+async function requestPlayerLink(id){
+ if(!currentAuthSession?.user){alert('Сначала войдите в аккаунт.');return}
+ try{
+  const {data,error}=await supabaseClient.rpc('request_player_account_link',{p_player_id:id});
+  if(error)throw error;
+  alert(data?.status==='pending'?'Заявка отправлена. Ожидайте одобрения.':'Ответ: '+JSON.stringify(data));
+ }catch(e){alert('Ошибка: '+(e.message||e))}
+}
+async function openPlayerLinkRequests(){
+ if(!currentAuthSession?.user){alert('Сначала войдите в аккаунт.');return}
+ try{
+  const {data,error}=await supabaseClient.rpc('list_player_account_link_requests');
+  if(error)throw error;
+  if(!Array.isArray(data)||!data.length){
+   openModal('<h2>Заявки на привязку</h2><p>Ожидающих заявок нет или нет прав на просмотр.</p><button class="cancel" onclick="closeModal()">Закрыть</button>');
+   return;
+  }
+  const html=data.map(r=>{
+   const rid=String(r.request_id||'').replace(/[^a-fA-F0-9-]/g,'');
+   return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><h3>'+esc(r.player_name||'Без имени')+'</h3><p>Аккаунт: <code>'+esc(String(r.requester_id||''))+'</code></p><p>'+esc(String(r.created_at||''))+'</p><button class="save" onclick="reviewPlayerLinkRequest(\''+rid+'\',true)">Одобрить</button> <button class="cancel" onclick="reviewPlayerLinkRequest(\''+rid+'\',false)">Отклонить</button></div>';
+  }).join('');
+  openModal('<h2>Заявки на привязку</h2>'+html+'<button class="cancel" onclick="closeModal()">Закрыть</button>');
+ }catch(e){alert('Ошибка загрузки заявок: '+(e.message||e))}
+}
+async function reviewPlayerLinkRequest(id,approve){
+ if(!confirm(approve?'Одобрить заявку?':'Отклонить заявку?'))return;
+ try{
+  const {data,error}=await supabaseClient.rpc('review_player_account_link',{p_request_id:id,p_approve:approve});
+  if(error)throw error;
+  if(data?.success===false)throw new Error(data.message||'Действие отклонено сервером');
+  alert(approve?'Заявка одобрена.':'Заявка отклонена.');
+  if(typeof cloudLoadPlayers==='function')await cloudLoadPlayers();
+  if(typeof refreshBuffUsage==='function')await refreshBuffUsage();
+  if(typeof render==='function')render();
+  await openPlayerLinkRequests();
+ }catch(e){alert('Ошибка обработки заявки: '+(e.message||e))}
+}
+function playerMenu(id){let p=players.find(x=>x.id===id);if(!p)return;let linkButton='';openModal(`<h2>${esc(p.name)}</h2><p>Баффов использовано: <b>${p.buffs}</b></p><button class="save" onclick="closeModal();editPlayer('${id}')">✎ Редактировать игрока</button><button class="cancel" onclick="if(confirm('Удалить игрока и его комментарий?')){players=players.filter(x=>x.id!=='${id}');cloudDeletePlayer('${id}');save();closeModal();render()}else closeModal()">Удалить игрока</button><button class="cancel" onclick="closeModal()">Закрыть</button>`)}window.timeSortMode='time';function sortPlayers(){window.timeSortMode=window.timeSortMode==='time'?'timeDesc':'time';let b=document.getElementById('sortTimeBtn');if(b){b.textContent=window.timeSortMode==='time'?'↓':'↑';b.title=window.timeSortMode==='time'?'Сначала меньше времени':'Сначала больше времени';b.setAttribute('aria-label',b.title)}render()}function showComments(){openModal(`<h2>Комментарии игроков</h2>${players.filter(p=>p.comment).map(p=>`<p><b>${esc(p.name)}:</b> ${esc(p.comment)}</p>`).join('')||'<p class="muted">Комментариев пока нет.</p>'}<button class="cancel" onclick="closeModal()">Закрыть</button>`)}
+
+// Общее облачное хранилище Supabase.
+let cloudReady = false;
+let cloudChannel = null;
+let cloudLoading = false;
+let cloudReloadPending = false;
+let cloudStarting = false;
+let cloudUserId = null;
+let cloudSnapshot = new Map();
+let cloudSyncRunning = false;
+let cloudSyncAgain = false;
+
+function cloudUUID() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random()*16|0;
+    return (c==='x'?r:(r&3|8)).toString(16);
+  });
+}
+
+function cloudFingerprint(p) {
+  return JSON.stringify([
+    p.id,p.name,p.category||'construction',Math.round(p.end),
+    Math.round(p.initial||0),Number(p.buffs)||0,Number(p.total_buffs)||0,p.comment||'',p.avatar||null
+  ]);
+}
+
+function cloudToRow(p) {
+  return {
+    id:p.id,
+    name:p.name,
+    category:p.category||'construction',
+    end_at:Math.round(p.end),
+    initial_ms:Math.round(p.initial||0),
+    buffs:Math.max(0,Number(p.buffs)||0),
+    total_buffs:Math.max(0,Number(p.total_buffs)||0),
+    comment:p.comment||'',
+    avatar_url:p.avatar||null,
+    updated_at:new Date().toISOString()
+  };
+}
+
+function cloudFromRow(r) {
+  return {
+    id:r.id,
+    name:r.name,
+    category:r.category||'construction',
+    end:Number(r.end_at),
+    initial:Number(r.initial_ms)||0,
+    buffs:Number(r.buffs)||0,
+    total_buffs:Number(r.total_buffs)||0,
+    comment:r.comment||'',
+    avatar:r.avatar_url||null,
+    linkedUserId:r.linked_user_id||null
+  };
+}
+
+async function cloudLoadPlayers() {
+  if (!supabaseClient || !currentAuthSession) return;
+  if (cloudLoading) {
+    cloudReloadPending=true;
+    return;
+  }
+  cloudLoading=true;
+  try {
+    const {data,error}=await supabaseClient.from('players')
+      .select('*').order('created_at',{ascending:true});
+    if(error) throw error;
+    if(!currentAuthSession) return;
+
+    players=(data||[]).map(cloudFromRow);
+    cloudSnapshot=new Map(players.map(p=>[p.id,cloudFingerprint(p)]));
+    localStorage.setItem(KEY,JSON.stringify(players));
+    cloudReady=true;
+    render();
+    await refreshBuffUsage();
+    authStatus('Вход выполнен · Облако синхронизировано');
+  } catch(e) {
+    cloudReady=false;
+    authStatus('Ошибка облака: '+(e.message||e));
+    console.error('Supabase load:',e);
+  } finally {
+    cloudLoading=false;
+    if(cloudReloadPending) {
+      cloudReloadPending=false;
+      cloudLoadPlayers();
+    }
+  }
+}
+
+async function cloudSyncChanges() {
+  if(!cloudReady || !supabaseClient || !currentAuthSession) return;
+  if(cloudSyncRunning) {
+    cloudSyncAgain=true;
+    return;
+  }
+  cloudSyncRunning=true;
+  try {
+    do {
+      cloudSyncAgain=false;
+      const changed=players.filter(p=>
+        cloudSnapshot.get(p.id)!==cloudFingerprint(p)
+      );
+      if(changed.length) {
+        const {data,error}=await supabaseClient.from('players')
+          .upsert(changed.map(cloudToRow),{onConflict:'id'}).select('*');
+        if(error) throw error;
+        (data||[]).forEach(r=>{
+          const p=cloudFromRow(r);
+          cloudSnapshot.set(p.id,cloudFingerprint(p));
+        });
+      }
+      if(players.some(p=>cloudSnapshot.get(p.id)!==cloudFingerprint(p)))
+        cloudSyncAgain=true;
+    } while(cloudSyncAgain && currentAuthSession);
+  } catch(e) {
+    authStatus('Ошибка синхронизации: '+(e.message||e));
+    console.error('Supabase sync:',e);
+  } finally {
+    cloudSyncRunning=false;
+  }
+}
+
+async function cloudDeletePlayer(id) {
+  cloudSnapshot.delete(id);
+  if(!supabaseClient || !currentAuthSession || !cloudReady) return;
+  try {
+    const {error}=await supabaseClient.from('players').delete().eq('id',id);
+    if(error) throw error;
+  } catch(e) {
+    authStatus('Ошибка удаления: '+(e.message||e));
+    console.error('Supabase delete:',e);
+  }
+}
+
+async function cloudStart(session) {
+  if(!session || !session.user) {
+    cloudStop();
+    return;
+  }
+  const uid=session.user.id;
+  if(cloudUserId===uid && (cloudChannel || cloudStarting)) return;
+
+  cloudStarting=true;
+  cloudReady=false;
+  cloudUserId=uid;
+  cloudSnapshot.clear();
+  try {
+    if(cloudChannel) {
+      await supabaseClient.removeChannel(cloudChannel);
+      cloudChannel=null;
+    }
+    await cloudLoadPlayers();
+    if(!currentAuthSession || currentAuthSession.user.id!==uid) return;
+
+    cloudChannel=supabaseClient.channel('shared-players-'+uid)
+      .on('postgres_changes',{
+        event:'*',schema:'public',table:'players'
+      },()=>cloudLoadPlayers())
+      .subscribe(status=>{
+        if(status==='CHANNEL_ERROR' || status==='TIMED_OUT')
+          console.warn('Supabase Realtime:',status);
+      });
+  } catch(e) {
+    authStatus('Ошибка подключения облака: '+(e.message||e));
+    console.error('Supabase start:',e);
+  } finally {
+    cloudStarting=false;
+  }
+}
+
+function cloudStop() {
+  cloudReady=false;
+  cloudUserId=null;
+  cloudSnapshot.clear();
+  if(cloudChannel && supabaseClient) {
+    supabaseClient.removeChannel(cloudChannel);
+    cloudChannel=null;
+  }
+  players=[];
+  localStorage.setItem(KEY,'[]');
+  render();
+}
+
+// SUPABASE_TIMERPLAYERS_AUTH
+const SUPABASE_URL = 'https://rgkdpdigvdrewymqelxa.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_EofTeotpyD5bXQeEXznAeQ_ZMc5o0sO';
+const AUTH_REDIRECT = 'com.example.timerplayers://auth/callback';
+let supabaseClient = null;
+let currentAuthSession = null;
+
+function authStatus(message) {
+  const el = document.getElementById('authStatus');
+  if (el) el.textContent = message;
+}
+
+function updateAuthUI(session) {
+  currentAuthSession = session || null;
+  if (typeof chatAuthChanged === 'function') chatAuthChanged(currentAuthSession);
+    const loginPanel = document.getElementById('authLoginPanel');
+    const logout = document.getElementById('googleLogout');
+  if (session && session.user) {
+    const user = session.user;
+    authStatus('Вход выполнен: ' + (user.email || user.user_metadata?.full_name || (user.app_metadata?.provider === 'telegram' ? 'Telegram' : user.app_metadata?.provider === 'google' ? 'Google' : 'пользователь')));
+    if (loginPanel) loginPanel.style.display = 'none';
+
+    if (logout) logout.style.display = 'inline-block';
+    cloudStart(session);
+  } else {
+    if (loginPanel) loginPanel.style.display = 'flex';
+
+    if (logout) logout.style.display = 'none';
+    cloudStop();
+    authStatus('Вход не выполнен');
+  }
+}
+
+try {
+  if (window.supabase && window.supabase.createClient) {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          flowType: 'pkce',
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false
+        }
+      }
+    );
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      updateAuthUI(session);
+    });
+
+    supabaseClient.auth.getSession().then(({data, error}) => {
+      if (error) authStatus('Ошибка проверки входа');
+      else updateAuthUI(data.session);
+    });
+  } else {
+    authStatus('Не удалось загрузить библиотеку входа');
+  }
+} catch (e) {
+  authStatus('Ошибка инициализации входа');
+  console.error(e);
+}
+
+
+let chatChannel = null;
+let chatStarted = false;
+
+function chatStatus(text) {
+  document.getElementById('chatStatus').textContent = text;
+}
+
+function drawChat(rows) {
+  const box = document.getElementById('chatMessages');
+  box.innerHTML = rows.map(m => {
+    const mine = currentAuthSession &&
+      m.user_id === currentAuthSession.user.id;
+    const time = new Date(m.created_at).toLocaleString('ru-RU', {
+      day:'2-digit', month:'2-digit',
+      hour:'2-digit', minute:'2-digit'
+    });
+    return `<div style="align-self:${mine?'flex-end':'flex-start'};max-width:90%;background:${mine?'#174a68':'#142b40'};padding:9px 11px;border-radius:12px;overflow-wrap:anywhere">
+      <div style="font-size:11px;color:#8fb3df;margin-bottom:4px">${esc(m.sender_name)} · ${time}</div>
+      <div style="white-space:pre-wrap">${esc(m.message)}</div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+function chatAuthChanged(session) {
+  if (!session) {
+    chatStarted = false;
+    if (chatChannel && supabaseClient) {
+      supabaseClient.removeChannel(chatChannel);
+      chatChannel = null;
+    }
+    chatStatus("Войдите через Google, чтобы пользоваться чатом");
+    drawChat([]);
+  } else if (activeTab === "chat") {
+    initChat();
+  }
+}
+
+async function loadChat() {
+  if (!supabaseClient || !currentAuthSession) {
+    chatStatus('Войдите через Google, чтобы пользоваться чатом');
+    drawChat([]);
+    return;
+  }
+  chatStatus('Загрузка сообщений…');
+  const cutoff = new Date(Date.now()-86400000).toISOString();
+  const {data,error} = await supabaseClient
+    .from('chat_messages')
+    .select('id,user_id,sender_name,message,created_at')
+    .gt('created_at',cutoff)
+    .order('created_at',{ascending:true})
+    .limit(500);
+
+  if (error) {
+    chatStatus('Ошибка чата: '+error.message);
+    return;
+  }
+  drawChat(data || []);
+  chatStatus('Общий чат · история за 24 часа');
+}
+
+async function initChat() {
+  if (!supabaseClient || !currentAuthSession) {
+    chatStatus('Войдите через Google, чтобы пользоваться чатом');
+    drawChat([]);
+    return;
+  }
+  await loadChat();
+  if (!chatStarted) {
+    chatStarted = true;
+    chatChannel = supabaseClient.channel('public-chat-messages')
+      .on('postgres_changes',
+        {event:'*',schema:'public',table:'chat_messages'},
+        () => { if(activeTab==='chat') loadChat(); })
+      .subscribe(status => {
+        if(status==='CHANNEL_ERROR' || status==='TIMED_OUT')
+          chatStatus('Ошибка подключения обновлений чата');
+      });
+  }
+}
+
+document.getElementById('chatForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!supabaseClient || !currentAuthSession) {
+    chatStatus('Сначала войдите через Google');
+    return;
+  }
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if (!message) return;
+
+  input.disabled = true;
+  const user = currentAuthSession.user;
+  const sender = user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email?.split('@')[0] || 'Игрок';
+
+  const {error} = await supabaseClient.from('chat_messages').insert({
+    user_id:user.id,
+    sender_name:String(sender).slice(0,100),
+    message:message
+  });
+  input.disabled = false;
+
+  if (error) {
+    chatStatus('Не удалось отправить: '+error.message);
+    return;
+  }
+  input.value = '';
+  await loadChat();
+});
+
+async function loginTelegram() {
+  await loginOAuth('custom:telegram', 'Telegram');
+}
+
+async function loginOAuth(provider, label) {
+  if (!supabaseClient) {
+    alert('Supabase не загрузился. Проверь подключение к интернету.');
+    return;
+  }
+  authStatus('Открываем ' + label + '...');
+  try {
+    const {data, error} = await supabaseClient.auth.signInWithOAuth({
+      provider: provider,
+      options: {
+        redirectTo: window.AndroidBridge
+          ? AUTH_REDIRECT
+          : (window.location.origin + window.location.pathname),
+        skipBrowserRedirect: true
+      }
+    });
+    if (error) throw error;
+    if (!data || !data.url) throw new Error('Ссылка авторизации не получена');
+    if (window.AndroidBridge) {
+      window.AndroidBridge.openExternalUrl(data.url);
+    } else {
+      window.location.href = data.url;
+    }
+  } catch (e) {
+    authStatus('Не удалось начать вход');
+    alert('Ошибка входа: ' + (e.message || e));
+  }
+}
+
+async function loginGoogle() {
+  await loginOAuth('google', 'Google');
+}
+
+
+async function logoutGoogle() {
+  if (!supabaseClient) return;
+  const {error} = await supabaseClient.auth.signOut();
+  if (error) alert('Не удалось выйти: ' + error.message);
+  else updateAuthUI(null);
+}
+
+window.handleAuthCallback = async function(callbackUrl) {
+  try {
+    const uri = new URL(callbackUrl);
+    const errorText = uri.searchParams.get('error_description') ||
+                      uri.searchParams.get('error');
+    if (errorText) {
+      authStatus('Ошибка входа через Google');
+      alert('Google: ' + errorText);
+      return;
+    }
+    const code = uri.searchParams.get('code');
+    if (!code) {
+      authStatus('В ответе Google нет кода авторизации');
+      return;
+    }
+    authStatus('Завершаем вход...');
+    const {data, error} = await supabaseClient.auth.exchangeCodeForSession(code);
+    if (error) throw error;
+    updateAuthUI(data.session);
+    authStatus('Вход выполнен');
+  } catch (e) {
+    authStatus('Ошибка завершения входа');
+    alert('Не удалось завершить вход: ' + (e.message || e));
+  }
+};
+
+if (!window.AndroidBridge &&
+    new URLSearchParams(window.location.search).has('code')) {
+  window.handleAuthCallback(window.location.href).finally(() => {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  });
+}
+
+function updateVisibleTimers(){
+  const now=Date.now();
+  document.querySelectorAll('#list .player').forEach(card=>{
+    const id=card.dataset.playerId;
+    const p=players.find(x=>String(x.id)===String(id));
+    if(!p)return;
+    const ms=Math.max(0,Number(p.end)-now);
+    const time=card.querySelector('.time');
+    if(time)time.textContent=fmt(ms);
+    const pct=p.initial>0?Math.max(0,Math.min(100,ms/p.initial*100)):0;
+    const color=pct>50?'#00d98b':pct>20?'#f5bd20':'#ff354f';
+    const bar=card.querySelector('.bar');
+    const label=card.querySelector('.pct');
+    if(bar){bar.style.width=pct+'%';bar.style.background=color;}
+    if(label){label.textContent=Math.round(pct)+'%';label.style.color=color;}
+  });
+}
+
+
+/* TIMER_JS_ERROR_DIAGNOSTIC */
+window.addEventListener('error', function(e) {
+  let box = document.getElementById('timerJsErrorBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'timerJsErrorBox';
+    box.style.cssText = 'position:fixed;z-index:100000;left:8px;right:8px;bottom:8px;background:#7f0000;color:white;padding:12px;border-radius:8px;font:14px sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:35vh;overflow:auto';
+    document.body.appendChild(box);
+  }
+  box.textContent = 'ОШИБКА JAVASCRIPT: ' + (e.message || 'неизвестная ошибка') +
+    '\\nФайл: ' + (e.filename || '') + ':' + (e.lineno || '');
+});
+window.addEventListener('unhandledrejection', function(e) {
+  let box = document.getElementById('timerJsErrorBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'timerJsErrorBox';
+    box.style.cssText = 'position:fixed;z-index:100000;left:8px;right:8px;bottom:8px;background:#7f0000;color:white;padding:12px;border-radius:8px;font:14px sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:35vh;overflow:auto';
+    document.body.appendChild(box);
+  }
+  box.textContent = 'ОШИБКА PROMISE: ' + String(e.reason);
+});
+
+load();updateVisibleTimers();setInterval(updateVisibleTimers,1000);setInterval(()=>{if(cloudReady)cloudSyncChanges()},30000);
+</script></body></html>
+
+<style>.nameRow .name-pencil{height:27px;min-width:30px;padding:0 6px;border-radius:8px;font-size:16px;flex-shrink:0;margin-left:auto}.nameRow .name{min-width:0}</style>

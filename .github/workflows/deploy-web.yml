@@ -30,7 +30,7 @@ jobs:
       - name: Prepare website
         run: |
           mkdir -p _site
-          cp app/src/main/assets/index.html _site/index.html
+          cp web/index.html _site/index.html
 
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
