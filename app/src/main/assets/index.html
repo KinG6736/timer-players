@@ -1231,7 +1231,13 @@ function updateVisibleTimers(){
   });
 }
 
-load();updateVisibleTimers();setInterval(updateVisibleTimers,1000);setInterval(()=>{if(cloudReady)cloudSyncChanges()},30000);
+let timerDiagnosticTicks=0;
+function timerDiagnosticTick(){
+  timerDiagnosticTicks++;
+  document.title='Тик '+timerDiagnosticTicks+' · '+fmt(Math.max(0,(players[0]?.end||Date.now())-Date.now()));
+  updateVisibleTimers();
+}
+load();timerDiagnosticTick();setInterval(timerDiagnosticTick,1000);setInterval(()=>{if(cloudReady)cloudSyncChanges()},30000);
 </script></body></html>
 
 <style>.nameRow .name-pencil{height:27px;min-width:30px;padding:0 6px;border-radius:8px;font-size:16px;flex-shrink:0;margin-left:auto}.nameRow .name{min-width:0}</style>
