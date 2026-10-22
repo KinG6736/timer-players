@@ -1255,20 +1255,7 @@ window.addEventListener('unhandledrejection', function(e) {
   box.textContent = 'ОШИБКА PROMISE: ' + String(e.reason);
 });
 
-let timerDiagnosticTicks=0;
-function timerDiagnosticTick(){
-  timerDiagnosticTicks++;
-  let badge=document.getElementById('timerDiagnosticBadge');
-  if(!badge){
-    badge=document.createElement('div');
-    badge.id='timerDiagnosticBadge';
-    badge.style.cssText='position:fixed;z-index:99999;right:8px;top:8px;background:#ffeb3b;color:#111;padding:8px 12px;border-radius:8px;font: bold 14px sans-serif;box-shadow:0 2px 8px #0008';
-    document.body.appendChild(badge);
-  }
-  badge.textContent='Проверка таймера: '+timerDiagnosticTicks;
-  updateVisibleTimers();
-}
-load();timerDiagnosticTick();setInterval(timerDiagnosticTick,1000);setInterval(()=>{if(cloudReady)cloudSyncChanges()},30000);
+load();updateVisibleTimers();setInterval(updateVisibleTimers,1000);setInterval(()=>{if(cloudReady)cloudSyncChanges()},30000);
 </script></body></html>
 
 <style>.nameRow .name-pencil{height:27px;min-width:30px;padding:0 6px;border-radius:8px;font-size:16px;flex-shrink:0;margin-left:auto}.nameRow .name{min-width:0}</style>
