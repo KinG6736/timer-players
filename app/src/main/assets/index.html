@@ -1234,7 +1234,14 @@ function updateVisibleTimers(){
 let timerDiagnosticTicks=0;
 function timerDiagnosticTick(){
   timerDiagnosticTicks++;
-  document.title='Тик '+timerDiagnosticTicks+' · '+fmt(Math.max(0,(players[0]?.end||Date.now())-Date.now()));
+  let badge=document.getElementById('timerDiagnosticBadge');
+  if(!badge){
+    badge=document.createElement('div');
+    badge.id='timerDiagnosticBadge';
+    badge.style.cssText='position:fixed;z-index:99999;right:8px;top:8px;background:#ffeb3b;color:#111;padding:8px 12px;border-radius:8px;font: bold 14px sans-serif;box-shadow:0 2px 8px #0008';
+    document.body.appendChild(badge);
+  }
+  badge.textContent='Проверка таймера: '+timerDiagnosticTicks;
   updateVisibleTimers();
 }
 load();timerDiagnosticTick();setInterval(timerDiagnosticTick,1000);setInterval(()=>{if(cloudReady)cloudSyncChanges()},30000);
