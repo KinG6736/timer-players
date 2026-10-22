@@ -1231,6 +1231,30 @@ function updateVisibleTimers(){
   });
 }
 
+
+/* TIMER_JS_ERROR_DIAGNOSTIC */
+window.addEventListener('error', function(e) {
+  let box = document.getElementById('timerJsErrorBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'timerJsErrorBox';
+    box.style.cssText = 'position:fixed;z-index:100000;left:8px;right:8px;bottom:8px;background:#7f0000;color:white;padding:12px;border-radius:8px;font:14px sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:35vh;overflow:auto';
+    document.body.appendChild(box);
+  }
+  box.textContent = 'ОШИБКА JAVASCRIPT: ' + (e.message || 'неизвестная ошибка') +
+    '\\nФайл: ' + (e.filename || '') + ':' + (e.lineno || '');
+});
+window.addEventListener('unhandledrejection', function(e) {
+  let box = document.getElementById('timerJsErrorBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'timerJsErrorBox';
+    box.style.cssText = 'position:fixed;z-index:100000;left:8px;right:8px;bottom:8px;background:#7f0000;color:white;padding:12px;border-radius:8px;font:14px sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:35vh;overflow:auto';
+    document.body.appendChild(box);
+  }
+  box.textContent = 'ОШИБКА PROMISE: ' + String(e.reason);
+});
+
 let timerDiagnosticTicks=0;
 function timerDiagnosticTick(){
   timerDiagnosticTicks++;
